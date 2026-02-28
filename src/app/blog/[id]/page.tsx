@@ -1,3 +1,10 @@
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
+import BlogRenderer from "@/components/blog/BlogRenderer";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const { data: post } = await supabase
     .from('blog_posts')
