@@ -21,7 +21,8 @@ export default function LoginPage() {
     // Artificial delay for premium feel
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    if (password === 'proptee') {
+    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'proptee';
+    if (password === adminPassword) {
       document.cookie = 'admin_auth=true; path=/; max-age=86400';
       router.push('/admin');
     } else {

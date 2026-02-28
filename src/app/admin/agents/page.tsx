@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Search, Mail, Phone, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Mail, Phone, Edit, Trash2, X } from 'lucide-react';
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([]);

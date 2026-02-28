@@ -23,6 +23,38 @@ export default function UploadPropertyPage() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/');
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.role !== 'agent') {
+        router.push('/');
+        return;
+      }
+      setCheckingAuth(false);
+    };
+    checkAuth();
+  }, [router]);
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
+        <Loader2 className="animate-spin text-[#0F3D2E]" size={40} />
+      </div>
+    );
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     // For now, we will use mock images or just collect URLs

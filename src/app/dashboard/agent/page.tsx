@@ -32,7 +32,22 @@ export default function AgentDashboard() {
 
   const fetchDashboardData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      window.location.href = '/'; // Simple client-side redirect
+      return;
+    }
+
+    // Check if user is an agent
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== 'agent') {
+      window.location.href = '/';
+      return;
+    }
 
     const { data: listings } = await supabase
       .from("listings")
