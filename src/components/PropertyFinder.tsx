@@ -1,84 +1,82 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, MapPin, ChevronDown } from "lucide-react";
+import { Search, MapPin, ChevronDown, SlidersHorizontal } from "lucide-react";
+
+const tabs = ["Buy", "Rent", "Sell"];
 
 const PropertyFinder = () => {
-  const [activeTab, setActiveTab] = useState("For Rent");
-
-  const tabs = ["For Lease", "For Rent", "For Sale"];
+  const [activeTab, setActiveTab] = useState("Buy");
 
   return (
     <div className="w-full max-w-6xl mx-auto">
-      {/* Selection Tabs (Radio Style) */}
-      <div className="flex mb-[-1px]">
-        <div className="bg-white px-8 py-5 rounded-t-[2rem] border-t border-x border-gray-100 flex items-center gap-8 shadow-sm">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="flex items-center gap-3 group transition-all"
-            >
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                activeTab === tab 
-                  ? "border-[#111827] bg-[#111827]" 
-                  : "border-gray-300 group-hover:border-[#111827]"
-              }`}>
-                {activeTab === tab && (
-                  <div className="w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
-                )}
-              </div>
-              <span className={`text-[13px] font-black uppercase tracking-wider transition-colors ${
-                activeTab === tab ? "text-[#111827]" : "text-gray-400 group-hover:text-gray-600"
-              }`}>
-                {tab}
-              </span>
-            </button>
-          ))}
-        </div>
+      {/* Tab Row */}
+      <div className="flex items-center gap-1 mb-3 pl-2">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-5 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.25em] transition-all duration-300 ${
+              activeTab === tab
+                ? "bg-[#D4AF37] text-black shadow-[0_4px_20px_rgba(212,175,55,0.4)]"
+                : "text-white/50 hover:text-white"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
-      {/* Main Search Console */}
-      <div className="bg-white rounded-b-[2rem] rounded-tr-[2rem] border border-gray-100 shadow-[0_45px_100px_rgba(0,0,0,0.1)] p-6 lg:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-          
-          {/* Keyword Field */}
-          <div className="relative group">
-            <input 
-              type="text" 
-              placeholder="Enter Keyword" 
-              className="w-full bg-[#F3F4F6] border-none rounded-2xl py-5 px-6 text-[#111827] text-sm font-medium placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-gray-200 transition-all"
-            />
-          </div>
+      {/* Search Bar */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center bg-white/8 backdrop-blur-2xl border border-white/12 rounded-2xl md:rounded-full overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
 
-          {/* Property Type Field */}
-          <div className="relative group">
-            <select className="w-full bg-[#F3F4F6] border-none rounded-2xl py-5 px-6 text-[#111827] text-sm font-medium appearance-none cursor-pointer outline-none focus:ring-2 focus:ring-gray-200 transition-all">
-              <option>Property Type</option>
-              <option>Apartments</option>
-              <option>Villas</option>
-              <option>Penthouses</option>
-              <option>Office Space</option>
-            </select>
-            <ChevronDown size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none group-hover:text-gray-600 transition-colors" />
-          </div>
-
-          {/* Location Field */}
-          <div className="relative group">
-            <input 
-              type="text" 
-              placeholder="Location" 
-              className="w-full bg-[#F3F4F6] border-none rounded-2xl py-5 px-6 pr-12 text-[#111827] text-sm font-medium placeholder:text-gray-400 outline-none focus:ring-2 focus:ring-gray-200 transition-all"
-            />
-            <MapPin size={18} className="absolute right-6 top-1/2 -translate-y-1/2 text-[#F26422]" />
-          </div>
-
-          {/* Search Button */}
-          <button className="w-full bg-[#F26422] hover:bg-[#D9531E] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-[0_15px_30px_rgba(242,100,34,0.3)] hover:shadow-[0_20px_40px_rgba(242,100,34,0.4)] transition-all duration-300 transform active:scale-[0.98]">
-            Search Property
-          </button>
-
+        {/* Location */}
+        <div className="flex items-center gap-3 flex-1 px-6 py-4 md:py-5 border-b md:border-b-0 md:border-r border-white/10">
+          <MapPin size={16} className="text-[#D4AF37] shrink-0" />
+          <input
+            type="text"
+            placeholder="City, Area or Address"
+            className="w-full bg-transparent text-white text-sm font-light placeholder:text-white/40 outline-none"
+          />
         </div>
+
+        {/* Property Type */}
+        <div className="relative flex items-center gap-3 flex-1 px-6 py-4 md:py-5 border-b md:border-b-0 md:border-r border-white/10">
+          <SlidersHorizontal size={16} className="text-white/40 shrink-0" />
+          <select className="w-full bg-transparent text-white text-sm font-light appearance-none cursor-pointer outline-none [&>option]:bg-[#111] [&>option]:text-white">
+            <option value="" disabled selected>Property Type</option>
+            <option>Luxury Estate</option>
+            <option>Penthouse</option>
+            <option>Villa</option>
+            <option>Duplex</option>
+            <option>Apartment</option>
+            <option>Office Space</option>
+          </select>
+          <ChevronDown size={15} className="absolute right-5 text-white/30 pointer-events-none" />
+        </div>
+
+        {/* Budget */}
+        <div className="relative flex items-center gap-3 flex-1 px-6 py-4 md:py-5 border-b md:border-b-0 border-white/10">
+          <span className="text-white/40 text-sm shrink-0 font-light">₦</span>
+          <select className="w-full bg-transparent text-white text-sm font-light appearance-none cursor-pointer outline-none [&>option]:bg-[#111] [&>option]:text-white">
+            <option value="" disabled selected>Budget Range</option>
+            <option>Under ₦50M</option>
+            <option>₦50M – ₦150M</option>
+            <option>₦150M – ₦500M</option>
+            <option>₦500M – ₦1B</option>
+            <option>Above ₦1B</option>
+          </select>
+          <ChevronDown size={15} className="absolute right-5 text-white/30 pointer-events-none" />
+        </div>
+
+        {/* Search Button */}
+        <div className="p-2 md:p-2.5 shrink-0">
+          <button className="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-[#D4AF37] hover:bg-[#c09b2c] text-black font-black text-[11px] uppercase tracking-[0.25em] rounded-xl md:rounded-full transition-all duration-300 shadow-[0_8px_25px_rgba(212,175,55,0.4)] hover:shadow-[0_12px_35px_rgba(212,175,55,0.6)] active:scale-95">
+            <Search size={16} />
+            <span>Search</span>
+          </button>
+        </div>
+
       </div>
     </div>
   );

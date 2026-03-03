@@ -3,212 +3,224 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Globe, User, LogOut, LayoutDashboard, Heart } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Heart, ArrowRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import AuthModal from "./auth/AuthModal";
 
+// Header height constant — keep in sync with the pt-[72px] on <main> in page.tsx
+const HEADER_H = 72;
+
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sideNavOpen, setSideNavOpen] = useState(false);
 
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  /* ── Lock body scroll when side-nav open ── */
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    document.body.style.overflow = sideNavOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [sideNavOpen]);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  /* ── Scroll listener ── */
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /* ── Auth ── */
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-      }
-    );
-
-    const checkUser = async () => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+      setUser(s?.user ?? null);
+      if (s?.user) fetchProfile(s.user.id); else setProfile(null);
+    });
+    (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-    };
-
-    checkUser();
+      if (session?.user) fetchProfile(session.user.id);
+    })();
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+  const fetchProfile = async (id: string) => {
+    const { data } = await supabase.from("profiles").select("*").eq("id", id).single();
     if (data) setProfile(data);
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setDropdownOpen(false);
+    setSideNavOpen(false);
   };
 
   const navItems = [
-    { name: 'Collections', href: '#properties' },
-    { name: 'About', href: '/about' },
-    { name: 'Short Stays', href: '#' },
-    { name: 'Insights', href: '/blog' },
-    { name: 'Concierge', href: '/contact' }
+    { name: "Home",        href: "/" },
+    { name: "Collections", href: "/#properties" },
+    { name: "About",       href: "/about" },
+    { name: "Insights",    href: "/blog" },
+    { name: "Concierge",   href: "/contact" },
   ];
 
   return (
-    <header className={`fixed top-0 left-0 w-full z-[100] transition-all duration-700 ${
-      scrolled 
-        ? "bg-white/95 backdrop-blur-xl py-4 border-b border-gray-100 shadow-sm" 
-        : "bg-transparent py-8"
-    }`}>
-      <div className="container mx-auto px-6 lg:px-16 flex justify-between items-center relative z-10 transition-all">
-        
-        {/* Architectural Logo */}
-        <Link href="/" className="flex items-center group shrink-0">
-          <div className="relative w-28 md:w-44 h-14 transition-transform duration-700 group-hover:scale-105">
-            <Image 
-              src="/logo.png" 
-              alt="Proptee Logo" 
-              fill
-              className="object-contain brightness-0"
-              priority
-            />
-          </div>
-        </Link>
+    <>
+      {/* ═══════════════════════════════════════
+          FIXED HEADER  (always at top of screen)
+          ═══════════════════════════════════════ */}
+      <header
+        style={{ height: HEADER_H }}
+        className={`fixed top-0 inset-x-0 z-[80] transition-all duration-500
+          ${scrolled
+            ? "bg-[#0A0A0A]/98 backdrop-blur-xl border-b border-white/6 shadow-[0_4px_30px_rgba(0,0,0,0.6)]"
+            : "bg-[#0A0A0A]"
+          }`}
+      >
+        <div className="h-full container mx-auto px-6 lg:px-12 flex items-center justify-between">
 
-        {/* Navigation - Spaced & Sophisticated */}
-        <nav className="hidden xl:flex items-center gap-4">
-          {navItems.map((item, i) => (
-            <Link 
-              key={i} 
-              href={item.href} 
-              className="relative group px-6 py-3 text-[11px] font-bold uppercase tracking-[0.4em] text-[#111827]/70 hover:text-[#111827] transition-all overflow-hidden"
+          {/* Logo */}
+          <Link href="/" className="shrink-0 group">
+            <div className="relative w-28 md:w-36 h-9 group-hover:scale-105 transition-transform duration-500">
+              <Image
+                src="/logo.png"
+                alt="Proptee"
+                fill
+                className="object-contain brightness-[100] drop-shadow"
+                priority
+              />
+            </div>
+          </Link>
+
+          {/* Right controls */}
+          <div className="flex items-center gap-4 md:gap-6">
+
+            {/* Private Portal — desktop only, shown when not logged in */}
+            {!user && (
+              <button
+                onClick={() => setAuthModalOpen(true)}
+                className="hidden md:flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.3em] px-7 py-3 rounded-full border border-white/15 text-white/80 hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300"
+              >
+                <User size={13} />
+                <span>Private Portal</span>
+              </button>
+            )}
+
+            {/* Hamburger / Menu button */}
+            <button
+              onClick={() => setSideNavOpen(true)}
+              aria-label="Open navigation"
+              className="flex items-center gap-3 text-white hover:text-[#D4AF37] transition-colors group"
             >
-              <span className="relative z-10">{item.name}</span>
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1.5px] bg-[#1F7A5C] group-hover:w-full transition-all duration-700"></span>
+              <span className="hidden sm:block text-[10px] font-bold uppercase tracking-[0.35em] text-white/60 group-hover:text-[#D4AF37] transition-colors">Menu</span>
+              <div className="w-11 h-11 flex items-center justify-center rounded-full border border-white/10 bg-white/5 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/8 transition-all duration-300">
+                <Menu size={18} />
+              </div>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Auth modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+
+      {/* ═══════════════════════════════════════
+          SIDE NAV OVERLAY
+          ═══════════════════════════════════════ */}
+      <div
+        aria-hidden
+        onClick={() => setSideNavOpen(false)}
+        className={`fixed inset-0 bg-black/65 backdrop-blur-sm z-[90] transition-all duration-500
+          ${sideNavOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}
+      />
+
+      {/* ═══════════════════════════════════════
+          SIDE NAV DRAWER (slides from right)
+          ═══════════════════════════════════════ */}
+      <aside
+        aria-label="Site navigation"
+        className={`fixed top-0 right-0 h-dvh w-full md:w-[440px] bg-[#080808] border-l border-white/6 z-[100]
+          flex flex-col shadow-[-30px_0_80px_rgba(0,0,0,0.7)]
+          transform transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+          ${sideNavOpen ? "translate-x-0" : "translate-x-full"}`}
+      >
+        {/* Drawer header */}
+        <div className="flex items-center justify-between px-8 py-6 border-b border-white/6 shrink-0">
+          <span className="text-[9px] font-bold uppercase tracking-[0.5em] text-white/30">Navigation</span>
+          <button
+            onClick={() => setSideNavOpen(false)}
+            aria-label="Close navigation"
+            className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:border-white/30 hover:rotate-90 transition-all duration-300"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Nav links */}
+        <nav className="flex-1 overflow-y-auto px-8 py-8 flex flex-col gap-1">
+          {navItems.map((item, i) => (
+            <Link
+              key={i}
+              href={item.href}
+              onClick={() => setSideNavOpen(false)}
+              className="group flex items-center justify-between py-5 border-b border-white/5 hover:border-[#D4AF37]/20 transition-colors duration-300"
+            >
+              <span className="text-4xl md:text-5xl font-serif font-light italic text-white/65 group-hover:text-[#D4AF37] transition-colors duration-300 leading-none">
+                {item.name}
+              </span>
+              <ArrowRight
+                size={20}
+                className="text-white/20 -translate-x-3 group-hover:text-[#D4AF37] group-hover:translate-x-0 opacity-0 group-hover:opacity-100 transition-all duration-300"
+              />
             </Link>
           ))}
         </nav>
 
-        {/* Right Actions - Focused */}
-        <div className="flex items-center gap-6 shrink-0">
+        {/* Drawer footer — auth */}
+        <div className="px-8 py-8 border-t border-white/6 bg-white/2 shrink-0">
           {user ? (
-            <div className="relative">
-              <button 
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-4 px-6 py-2.5 rounded-full border border-gray-100 bg-white/80 backdrop-blur-md text-[#111827] transition-all hover:bg-white shadow-sm"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#1F7A5C] flex items-center justify-center text-[10px] font-bold text-white shadow-lg">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-4 mb-2">
+                <div className="w-11 h-11 rounded-full bg-[#D4AF37] flex items-center justify-center text-base font-black text-black shrink-0">
                   {profile?.full_name?.charAt(0) || user.email?.charAt(0)}
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] hidden lg:block">Resident Portal</span>
-              </button>
-
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-6 w-72 bg-white backdrop-blur-3xl rounded-[2rem] shadow-[0_40px_100px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden py-4 animate-in fade-in slide-in-from-top-6 duration-500">
-                  <div className="px-8 py-6 border-b border-gray-50 mb-2">
-                    <p className="font-bold text-[#111827] text-base truncate mb-1">{profile?.full_name || 'Valued Resident'}</p>
-                    <p className="text-[10px] text-[#6B7280] font-bold uppercase tracking-widest">{profile?.role || 'Member'}</p>
-                  </div>
-                  
-                  <div className="px-4">
-                    {profile?.role === 'agent' && (
-                      <Link href="/dashboard/agent" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 rounded-2xl text-[#4B5563] hover:text-[#111827] transition-all group">
-                        <LayoutDashboard size={18} className="text-[#1F7A5C]/40 group-hover:text-[#1F7A5C]" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Dashboard</span>
-                      </Link>
-                    )}
-                    <Link href="/saved" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 rounded-2xl text-[#4B5563] hover:text-[#111827] transition-all group">
-                      <Heart size={18} className="text-[#1F7A5C]/40 group-hover:text-[#1F7A5C]" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Collections</span>
-                    </Link>
-                    <button 
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-4 px-6 py-4 hover:bg-red-50 rounded-2xl text-red-600 transition-all border-t border-gray-50 mt-2"
-                    >
-                      <LogOut size={18} className="opacity-40" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-left">End Session</span>
-                    </button>
-                  </div>
+                <div>
+                  <p className="text-white font-semibold text-sm leading-tight">{profile?.full_name || "Valued Resident"}</p>
+                  <p className="text-white/40 text-[10px] uppercase tracking-[0.3em] mt-0.5">{profile?.role || "Member"}</p>
                 </div>
+              </div>
+              {profile?.role === "agent" && (
+                <Link href="/dashboard/agent" onClick={() => setSideNavOpen(false)}
+                  className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/8 text-white/70 hover:text-[#D4AF37] transition-all group">
+                  <LayoutDashboard size={16} className="group-hover:text-[#D4AF37]" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Dashboard</span>
+                </Link>
               )}
+              <Link href="/saved" onClick={() => setSideNavOpen(false)}
+                className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/8 text-white/70 hover:text-[#D4AF37] transition-all group">
+                <Heart size={16} className="group-hover:text-[#D4AF37]" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Saved Collections</span>
+              </Link>
+              <button onClick={handleLogout}
+                className="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-red-500/8 hover:bg-red-500/15 text-red-400/80 hover:text-red-400 border border-red-500/15 transition-all">
+                <LogOut size={16} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em]">End Session</span>
+              </button>
             </div>
           ) : (
-            <button 
-              onClick={() => setAuthModalOpen(true)}
-              className="hidden md:flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.4em] px-10 py-4 rounded-full bg-[#1F7A5C] text-white transition-all duration-500 hover:bg-[#14532D] shadow-[0_15px_30px_rgba(31,122,92,0.15)] hover:scale-105 active:scale-95 border border-[#1F7A5C]"
-            >
-              <User size={14} className="opacity-70" />
-              <span>Private Portal</span>
-            </button>
-          )}
-
-          {/* Mobile Toggle */}
-          <button
-            className="xl:hidden w-12 h-12 flex items-center justify-center rounded-full text-[#111827] bg-gray-100 hover:bg-gray-200 transition-all"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </div>
-
-      <AuthModal 
-        isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
-      />
-
-      {/* Mobile Menu */}
-      <div className={`fixed inset-0 bg-white z-[90] transition-all duration-1000 flex flex-col ${mobileMenuOpen ? "clip-path-open" : "clip-path-closed pointer-events-none"}`}>
-        <div className="flex-1 flex flex-col justify-center items-center relative z-10 px-8">
-          <div className="flex flex-col items-center gap-8">
-            {navItems.map((item, i) => (
-              <Link 
-                key={i} 
-                href={item.href} 
-                className="text-[#111827] text-5xl md:text-8xl font-serif italic tracking-tighter hover:text-[#1F7A5C] transition-all relative group"
-                onClick={() => setMobileMenuOpen(false)}
+            <div>
+              <p className="text-[9px] text-white/30 uppercase tracking-[0.45em] mb-4 font-bold">Member Access</p>
+              <button
+                onClick={() => { setSideNavOpen(false); setAuthModalOpen(true); }}
+                className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-[#D4AF37] hover:bg-[#c09b2c] text-black text-[11px] font-black uppercase tracking-[0.25em] transition-all duration-300 active:scale-95"
               >
-                <span className="relative z-10">{item.name}</span>
-                <span className="absolute -left-16 top-1/2 -translate-y-1/2 text-sm font-sans not-italic text-[#111827]/10 group-hover:text-[#1F7A5C]/40 transition-colors uppercase tracking-[0.5em] font-bold">0{i+1}</span>
-              </Link>
-            ))}
-          </div>
+                <User size={15} />
+                <span>Sign In / Register</span>
+              </button>
+            </div>
+          )}
         </div>
-        
-        <div className="h-48 flex flex-col justify-center items-center border-t border-gray-100 relative z-10 bg-gray-50/50 backdrop-blur-md">
-          <div className="flex gap-12 items-center mb-8">
-            <Link href="/privacy" className="text-[10px] font-bold text-[#111827]/30 uppercase tracking-[0.4em] hover:text-[#1F7A5C] transition-colors">Privacy</Link>
-            <Link href="/terms" className="text-[10px] font-bold text-[#111827]/30 uppercase tracking-[0.4em] hover:text-[#1F7A5C] transition-colors">Legal</Link>
-            <Link href="/contact" className="text-[10px] font-bold text-[#111827]/30 uppercase tracking-[0.4em] hover:text-[#1F7A5C] transition-colors">Concierge</Link>
-          </div>
-          <p className="text-[9px] font-bold text-[#111827]/10 uppercase tracking-[0.8em]">© 2024 Architectural Excellence</p>
-        </div>
-      </div>
-
-      <style jsx>{`
-        .clip-path-open {
-          clip-path: circle(150% at 100% 0);
-          opacity: 1;
-        }
-        .clip-path-closed {
-          clip-path: circle(0% at 100% 0);
-          opacity: 0;
-        }
-      `}</style>
-    </header>
+      </aside>
+    </>
   );
 };
 

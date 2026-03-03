@@ -13,16 +13,21 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <>
+      {/* Fixed header rendered OUTSIDE the scrollable main, always above everything */}
       <Header />
-      <Hero />
-      <Features />
-      <About />
-      <Properties />
-      <Blog />
-      <Testimonials />
-      <Contact />
-      <Footer />
-    </main>
+
+      {/* pt-[72px] = exact height of fixed header so first section is never hidden under it */}
+      <main className="min-h-screen pt-[72px]">
+        <Hero />
+        <Features />
+        <About />
+        <Properties />
+        <Blog />
+        <Testimonials />
+        <Contact />
+        <Footer />
+      </main>
+    </>
   );
 }
