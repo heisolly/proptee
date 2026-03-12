@@ -34,9 +34,9 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
     <section className="py-24 bg-[#f9f9f9]">
       <div className="container max-w-[1140px] mx-auto px-6">
 
-        <h2 className="text-4xl font-serif text-brand-dark mb-12">Popular Properties</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-brand-dark mb-12 uppercase tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>Popular Properties</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 -mx-6 px-6 md:mx-0 md:px-0">
           {displayProperties.map((prop, i) => (
             <motion.div
               key={prop.id}
@@ -44,7 +44,7 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-              className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500 group"
+              className="min-w-[85vw] md:min-w-0 snap-center bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500 group"
             >
               {/* Image */}
               <Link href={`/properties/${prop.id}`} className="block relative aspect-[4/3] overflow-hidden">
@@ -67,25 +67,25 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
                   <span className="text-brand-dark/40 text-base font-sans font-normal"> {prop.listing_type === "For Rent" ? "/month" : ""}</span>
                 </p>
                 <Link href={`/properties/${prop.id}`}>
-                  <h3 className="text-brand-dark text-xl font-serif mb-2 hover:text-brand-emerald transition-colors line-clamp-1">
+                  <h3 className="text-brand-dark text-lg font-serif mb-2 hover:text-brand-emerald transition-colors line-clamp-1">
                     {prop.title}
                   </h3>
                 </Link>
-                <p className="text-brand-dark/50 text-sm font-sans mb-5 line-clamp-1">{prop.address}</p>
+                <p className="text-brand-dark/50 text-xs font-sans mb-5 line-clamp-1">{prop.address}</p>
 
                 {/* Specs */}
-                <div className="border-t border-gray-100 pt-4 flex items-center gap-6">
+                <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-brand-dark/60">
-                    <BedDouble size={18} className="text-brand-emerald" />
-                    <span className="text-sm font-medium">{prop.beds} bed</span>
+                    <BedDouble size={16} className="text-brand-emerald" />
+                    <span className="text-xs font-medium">{prop.beds} bed</span>
                   </div>
                   <div className="flex items-center gap-2 text-brand-dark/60">
-                    <Bath size={18} className="text-brand-emerald" />
-                    <span className="text-sm font-medium">{prop.baths} bath</span>
+                    <Bath size={16} className="text-brand-emerald" />
+                    <span className="text-xs font-medium">{prop.baths} bath</span>
                   </div>
                   <div className="flex items-center gap-2 text-brand-dark/60">
-                    <Maximize2 size={18} className="text-brand-emerald" />
-                    <span className="text-sm font-medium">{prop.sqft} m²</span>
+                    <Maximize2 size={16} className="text-brand-emerald" />
+                    <span className="text-xs font-medium">{prop.sqft} m²</span>
                   </div>
                 </div>
               </div>

@@ -26,7 +26,7 @@ export default function AboutFeatures() {
   return (
     <section className="py-24 bg-white border-t border-gray-100">
       <div className="container max-w-[1140px] mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div className="flex overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-3 gap-8 md:gap-12 -mx-6 px-6 md:mx-0 md:px-0">
           {features.map((item, i) => (
             <motion.div
               key={i}
@@ -34,7 +34,7 @@ export default function AboutFeatures() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.15 }}
-              className="text-center group"
+              className="min-w-[70vw] md:min-w-0 snap-center text-center group"
             >
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 rounded-full bg-brand-emerald/5 flex items-center justify-center group-hover:bg-brand-emerald group-hover:text-white transition-all duration-500">

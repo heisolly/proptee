@@ -39,7 +39,7 @@ export default function BlogSection() {
       <div className="container max-w-[1140px] mx-auto px-6">
 
         <div className="flex items-center justify-between mb-12">
-          <h2 className="text-4xl font-serif text-brand-dark">Related Posts</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-dark uppercase tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>Recent Insights</h2>
           <Link
             href="/blog"
             className="bg-brand-emerald text-white px-8 py-3.5 rounded-lg text-sm font-bold hover:bg-brand-emerald-muted transition-all"
@@ -48,7 +48,7 @@ export default function BlogSection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-3 gap-8 -mx-6 px-6 md:mx-0 md:px-0">
           {posts.map((post, i) => (
             <motion.article
               key={i}
@@ -56,7 +56,7 @@ export default function BlogSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="group"
+              className="min-w-[80vw] md:min-w-0 snap-center group"
             >
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6">
                 <Image
@@ -67,15 +67,15 @@ export default function BlogSection() {
                 />
               </div>
               <div>
-                <p className="text-brand-emerald text-[11px] font-black uppercase tracking-[0.3em] mb-3 font-sans">
+                <p className="text-brand-emerald text-[11px] font-black uppercase tracking-[0.2em] mb-3 font-sans">
                   {post.category} / {post.date}
                 </p>
                 <Link href={post.href}>
-                  <h4 className="text-xl font-serif text-brand-dark mb-3 leading-snug group-hover:text-brand-emerald transition-colors line-clamp-2">
+                  <h4 className="text-lg md:text-xl font-serif text-brand-dark mb-3 leading-snug group-hover:text-brand-emerald transition-colors line-clamp-2">
                     {post.title}
                   </h4>
                 </Link>
-                <p className="text-brand-dark/50 text-sm font-sans leading-relaxed line-clamp-2">
+                <p className="text-brand-dark/50 text-xs md:text-sm font-sans leading-relaxed line-clamp-2">
                   {post.excerpt}
                 </p>
               </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Space_Grotesk, Dancing_Script } from "next/font/google";
+import { Playfair_Display, Space_Grotesk, Syne } from "next/font/google";
 import "@/styles/globals.css";
 
 const playfair = Playfair_Display({
@@ -12,9 +12,10 @@ const space = Space_Grotesk({
   variable: "--font-space",
 });
 
-const dancing = Dancing_Script({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-handwriting",
+  weight: ["700", "800"],
+  variable: "--font-syne",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${playfair.variable} ${space.variable} ${dancing.variable} font-sans bg-brand-bg text-brand-dark antialiased selection:bg-brand-gold-pale selection:text-brand-gold`}>
+      <body className={`${playfair.variable} ${space.variable} ${syne.variable} font-sans bg-brand-bg text-brand-dark antialiased selection:bg-brand-gold-pale selection:text-brand-gold`}>
         {children}
       </body>
     </html>

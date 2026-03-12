@@ -33,7 +33,7 @@
   /* ── Typography ── */
   --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
   --font-sans:  var(--font-space), "Space Grotesk", system-ui, sans-serif;
-  --font-handwriting: var(--font-handwriting), "Dancing Script", cursive;
+  --font-bold: var(--font-syne), "Syne", sans-serif;
 }
 
 /* ── Base Reset ── */

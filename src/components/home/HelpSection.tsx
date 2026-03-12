@@ -50,7 +50,7 @@ export default function HelpSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-4xl md:text-5xl font-serif text-brand-dark leading-tight mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold text-brand-dark leading-tight mb-6 uppercase tracking-tighter" style={{ fontFamily: "var(--font-bold)" }}>
               We Help People Find Their <span className="text-brand-emerald">Dream Homes</span>
             </h2>
             <p className="text-brand-dark/60 text-lg leading-relaxed mb-8 font-sans">
