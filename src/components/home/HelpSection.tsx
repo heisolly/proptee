@@ -51,7 +51,7 @@ export default function HelpSection() {
             transition={{ duration: 0.8 }}
             className="text-center md:text-left"
           >
-            <h2 className="text-3xl md:text-5xl font-bold text-brand-dark leading-tight mb-6 uppercase tracking-tighter" style={{ fontFamily: "var(--font-bold)" }}>
+            <h2 className="text-2xl md:text-4xl font-bold text-brand-dark leading-tight mb-6 uppercase tracking-tighter" style={{ fontFamily: "var(--font-bold)" }}>
               We Help People Find Their <span className="text-brand-emerald">Dream Homes</span>
             </h2>
             <p className="text-brand-dark/60 text-base md:text-lg leading-relaxed mb-8 font-sans">

@@ -23,7 +23,7 @@ export default function HeroCinematic() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl lg:text-9xl text-white leading-[1] mb-8 px-4 font-extrabold tracking-tight uppercase"
+            className="text-4xl md:text-6xl lg:text-8xl text-white leading-tight mb-8 px-4 font-extrabold tracking-tighter uppercase"
             style={{ 
               fontFamily: "var(--font-bold), sans-serif",
               textShadow: "0 4px 20px rgba(0,0,0,0.4)",

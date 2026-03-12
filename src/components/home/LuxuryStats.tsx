@@ -34,7 +34,7 @@ export default function LuxuryStats() {
                <Hexagon size={24} className="text-brand-gold-bright fill-brand-gold-bright/10" />
                <span className="text-brand-gold text-[11px] font-black uppercase tracking-[0.5em] font-sans">Our Track Record</span>
             </div>
-            <h2 className="text-6xl md:text-8xl font-serif font-light text-brand-dark tracking-tighter leading-[0.9] mb-10">
+            <h2 className="text-4xl md:text-6xl font-light text-brand-dark tracking-tighter leading-[0.9] mb-10" style={{ fontFamily: "var(--font-bold)" }}>
               The <span className="italic">Power</span> <br />
               of Precision.
             </h2>
@@ -88,7 +88,7 @@ export default function LuxuryStats() {
                  <div className="h-px w-20 bg-brand-dark/5 hidden lg:block mb-4" />
               </div>
               <div className="space-y-3">
-                 <h4 className="text-4xl md:text-5xl font-serif text-brand-dark tracking-tight">{item.value}</h4>
+                 <h4 className="text-3xl md:text-4xl font-bold text-brand-dark tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>{item.value}</h4>
                  <div className="flex flex-col">
                     <span className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-dark">{item.label}</span>
                     <span className="text-[10px] text-brand-dark/40 italic font-serif mt-1">{item.sub}</span>

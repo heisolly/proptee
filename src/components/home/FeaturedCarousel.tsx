@@ -34,7 +34,7 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
     <section className="py-24 bg-[#f9f9f9]">
       <div className="container max-w-[1140px] mx-auto px-6">
 
-        <h2 className="text-3xl md:text-4xl font-bold text-brand-dark mb-12 uppercase tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>Popular Properties</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-brand-dark mb-12 uppercase tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>Popular Properties</h2>
 
         <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 -mx-6 px-6 md:mx-0 md:px-0">
           {displayProperties.map((prop, i) => (

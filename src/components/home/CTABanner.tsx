@@ -23,7 +23,7 @@ export default function CTABanner() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h3 className="text-4xl md:text-5xl font-bold text-white leading-tight uppercase tracking-tighter" style={{ fontFamily: "var(--font-bold)" }}>
+            <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight uppercase tracking-tighter" style={{ fontFamily: "var(--font-bold)" }}>
               Let's Simply Begin the Search.
             </h3>
           </motion.div>

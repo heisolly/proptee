@@ -39,7 +39,7 @@ export default function BlogSection() {
       <div className="container max-w-[1140px] mx-auto px-6">
 
         <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-brand-dark uppercase tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>Recent Insights</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-brand-dark uppercase tracking-tight" style={{ fontFamily: "var(--font-bold)" }}>Recent Insights</h2>
           <Link
             href="/blog"
             className="bg-brand-emerald text-white px-8 py-3.5 rounded-lg text-sm font-bold hover:bg-brand-emerald-muted transition-all"

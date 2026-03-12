@@ -39,9 +39,9 @@ export default function PremiumLocations() {
                <Hexagon size={24} className="text-brand-gold-bright fill-brand-gold-bright/10" />
                <span className="text-brand-gold-bright text-[11px] font-black uppercase tracking-[0.5em] font-sans">Prestigious Districts</span>
             </div>
-            <h2 className="text-6xl md:text-8xl font-serif font-light text-white tracking-tighter leading-[0.85]">
+            <h2 className="text-5xl md:text-7xl font-light text-white tracking-tighter leading-[0.85]" style={{ fontFamily: "var(--font-bold)" }}>
               Prime <br />
-              <span className="italic font-normal opacity-30">Destinations</span>
+              <span className="italic font-bold opacity-30">Destinations</span>
             </h2>
           </div>
           <Link
