@@ -123,10 +123,10 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
                       {prop.title}
                     </h3>
                   </Link>
-                  <p className="text-brand-dark/50 text-xs font-sans mb-8 flex items-center gap-2">
+                  <div className="text-brand-dark/50 text-xs font-sans mb-8 flex items-center gap-2">
                     <div className="w-1 h-1 rounded-full bg-brand-emerald" />
                     {prop.address}
-                  </p>
+                  </div>
 
                   <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-50">
                     <div className="flex flex-col gap-1">

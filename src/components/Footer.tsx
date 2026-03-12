@@ -13,6 +13,11 @@ const links = {
 };
 
 export default function Footer() {
+  const [year, setYear] = React.useState<number | null>(null);
+  React.useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="bg-brand-dark">
       {/* Main Footer */}
@@ -79,7 +84,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/5">
         <div className="container max-w-[1140px] mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-white/20 font-sans">
-          <p>© {new Date().getFullYear()} Proptee Ng Limited. All Rights Reserved.</p>
+          <p>© {year || 2026} Proptee Ng Limited. All Rights Reserved.</p>
           <div className="flex gap-6">
             <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
