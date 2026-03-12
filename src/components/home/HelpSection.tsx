@@ -37,9 +37,9 @@ export default function HelpSection() {
               />
             </div>
             {/* Floating Badge */}
-            <div className="absolute -bottom-6 -right-6 bg-brand-emerald text-white p-6 rounded-2xl shadow-xl">
-              <div className="text-4xl font-serif font-bold leading-none">10K+</div>
-              <div className="text-xs font-black uppercase tracking-widest mt-1 opacity-80">Happy Clients</div>
+            <div className="absolute -bottom-4 -right-2 md:-bottom-6 md:-right-6 bg-brand-emerald text-white p-4 md:p-6 rounded-2xl shadow-xl">
+              <div className="text-2xl md:text-4xl font-bold leading-none">10K+</div>
+              <div className="text-[10px] md:text-xs font-black uppercase tracking-widest mt-1 opacity-80">Happy Clients</div>
             </div>
           </motion.div>
 
@@ -49,19 +49,20 @@ export default function HelpSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="text-center md:text-left"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-brand-dark leading-tight mb-6 uppercase tracking-tighter" style={{ fontFamily: "var(--font-bold)" }}>
               We Help People Find Their <span className="text-brand-emerald">Dream Homes</span>
             </h2>
-            <p className="text-brand-dark/60 text-lg leading-relaxed mb-8 font-sans">
+            <p className="text-brand-dark/60 text-base md:text-lg leading-relaxed mb-8 font-sans">
               At Proptee, we go beyond listings. We're your trusted partner through every step of
               the property journey — from that first search to the final handshake.
             </p>
 
-            <ul className="space-y-4 mb-10">
+            <ul className="space-y-4 mb-10 text-left">
               {points.map((point, i) => (
                 <li key={i} className="flex items-start gap-4 text-brand-dark/70 font-sans">
-                  <CheckCircle size={20} className="text-brand-emerald mt-0.5 shrink-0" />
+                  <CheckCircle size={18} className="text-brand-emerald mt-0.5 shrink-0" />
                   <span className="text-sm leading-relaxed">{point}</span>
                 </li>
               ))}
@@ -69,12 +70,11 @@ export default function HelpSection() {
 
             <Link
               href="/contact"
-              className="bg-brand-emerald text-white px-10 py-4 rounded-lg font-bold hover:bg-brand-emerald-muted transition-all inline-block shadow-lg shadow-brand-emerald/10"
+              className="bg-brand-emerald text-white px-10 py-4 rounded-lg font-bold hover:bg-brand-emerald-muted transition-all inline-block shadow-lg shadow-brand-emerald/10 mx-auto md:mx-0"
             >
               Get In Touch
             </Link>
           </motion.div>
-
         </div>
       </div>
     </section>

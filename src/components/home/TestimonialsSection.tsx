@@ -41,11 +41,11 @@ export default function TestimonialsSection() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="flex justify-center mb-6">
-                <Quote size={80} className="text-brand-emerald opacity-20" strokeWidth={1} />
+              <div className="flex justify-center mb-4 md:mb-6">
+                <Quote className="text-brand-emerald opacity-20 w-12 h-12 md:w-20 md:h-20" strokeWidth={1} />
               </div>
 
-              <p className="text-brand-dark/70 text-xl leading-relaxed font-sans italic mb-10">
+              <p className="text-brand-dark/70 text-lg md:text-xl leading-relaxed font-sans italic mb-8 md:mb-10">
                 "{testimonials[current].quote}"
               </p>
 
