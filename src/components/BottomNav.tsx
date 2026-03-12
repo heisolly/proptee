@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Search, Heart, Map, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useSearch } from "@/context/SearchContext";
 
 const tabs = [
   { label: "Home", href: "/", icon: Home },
-  { label: "Search", href: "/properties", icon: Search },
+  { label: "Search", href: "/properties", icon: Search, isSearch: true },
   { label: "Saved", href: "/saved", icon: Heart },
   { label: "Map", href: "/map", icon: Map },
   { label: "Account", href: "/login", icon: User },
@@ -16,6 +17,7 @@ const tabs = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { openSearch } = useSearch();
 
   // Hide on admin pages
   if (pathname.startsWith("/admin")) return null;
@@ -33,6 +35,25 @@ export default function BottomNav() {
             tab.href === "/"
               ? pathname === "/"
               : pathname.startsWith(tab.href);
+
+          if (tab.isSearch) {
+            return (
+              <button
+                key={tab.label}
+                onClick={openSearch}
+                className="relative flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] px-3 py-2 rounded-2xl transition-colors"
+              >
+                <tab.icon
+                  size={22}
+                  strokeWidth={1.6}
+                  className="relative z-10 text-gray-400"
+                />
+                <span className="relative z-10 text-[10px] font-semibold tracking-wide text-gray-400">
+                  {tab.label}
+                </span>
+              </button>
+            );
+          }
 
           return (
             <Link

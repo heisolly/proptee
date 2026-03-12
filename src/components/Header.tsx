@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Globe, User, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Globe, LogOut, LayoutDashboard, User, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import FullNav from "./Sidebar";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { useSearch } from "@/context/SearchContext";
 
 export default function Header() {
+  const { openSearch } = useSearch();
   const [scrolled, setScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -135,6 +137,16 @@ export default function Header() {
             >
               List Property
             </Link>
+
+            {/* Search Trigger */}
+            <button
+              onClick={openSearch}
+              className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
+                scrolled ? "text-gray-500 hover:bg-gray-100" : "text-white/70 hover:bg-white/10"
+              }`}
+            >
+              <Search size={18} />
+            </button>
 
             {/* Globe / Language */}
             <button
