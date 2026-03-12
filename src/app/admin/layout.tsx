@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   BarChart3, 
   Home, 
@@ -94,12 +95,14 @@ export default function AdminLayout({
                 exit={{ opacity: 0, x: -10 }}
                 className="flex items-center gap-3 overflow-hidden"
               >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0F3D2E] to-[#1F7A5C] flex items-center justify-center shrink-0">
-                  <Building2 size={20} className="text-white" />
+                <div className="relative w-36 h-10">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Proptee Logo" 
+                    fill 
+                    className="object-contain" 
+                  />
                 </div>
-                <span className="font-black text-xl tracking-tighter uppercase whitespace-nowrap">
-                  Proptee <span className="text-[#1F7A5C]">Admin</span>
-                </span>
               </motion.div>
             ) : (
               <motion.div 
@@ -107,9 +110,14 @@ export default function AdminLayout({
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#0F3D2E] to-[#1F7A5C] flex items-center justify-center mx-auto"
+                className="relative w-10 h-10 mx-auto"
               >
-                <Building2 size={20} className="text-white" />
+                <Image 
+                  src="/logo.png" 
+                  alt="Proptee Logo" 
+                  fill 
+                  className="object-contain" 
+                />
               </motion.div>
             )}
           </AnimatePresence>

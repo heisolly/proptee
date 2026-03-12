@@ -63,13 +63,17 @@ export default function LoginPage() {
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-            className="w-20 h-20 bg-[#F2F2F2] rounded-3xl flex items-center justify-center mb-6 shadow-2xl relative group overflow-hidden"
+            className="w-48 h-20 flex items-center justify-center mb-4 relative"
           >
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#0F3D2E] to-[#1F7A5C] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <Building2 className="text-[#0F3D2E] group-hover:text-white transition-colors relative z-10" size={40} />
+            <Image 
+              src="/logo.png" 
+              alt="Proptee Logo" 
+              fill 
+              className="object-contain" 
+            />
           </motion.div>
-          <h1 className="text-4xl font-black text-white tracking-tighter mb-2">
-            PROPTEE <span className="text-[#1F7A5C]">ADMIN</span>
+          <h1 className="text-xl font-black text-white tracking-[0.3em] mb-2 uppercase">
+            ADMIN <span className="text-[#1F7A5C]">PORTAL</span>
           </h1>
           <p className="text-gray-400 font-medium tracking-wide uppercase text-[10px]">Secure Gateway • Real Estate Management</p>
         </div>

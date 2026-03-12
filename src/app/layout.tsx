@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Playfair_Display, Space_Grotesk } from "next/font/google";
 import "@/styles/globals.css";
 
-const outfit = Outfit({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--font-outfit",
+  variable: "--font-playfair",
+});
+
+const space = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space",
 });
 
 export const metadata: Metadata = {
-  title: "Proptee.ng | Verified Real Estate in Nigeria",
-  description: "Proptee.ng is Nigeria's trusted platform for property rentals, investments, buying, and selling. Find verified listings in Lagos, Ibadan, and more.",
+  title: "Proptee | Premium Real Estate",
+  description: "Experience luxury living with curated premium properties worldwide. Discover your next prestigious address.",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
@@ -23,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${outfit.variable} font-sans`}>
+    <html lang="en" className="scroll-smooth">
+      <body className={`${playfair.variable} ${space.variable} font-sans bg-brand-bg text-brand-dark antialiased selection:bg-brand-gold-pale selection:text-brand-gold`}>
         {children}
       </body>
     </html>

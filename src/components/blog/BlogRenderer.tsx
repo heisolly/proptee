@@ -23,19 +23,18 @@ const RenderBlock = ({ block }: { block: Block }) => {
   switch (block.type) {
     case 'heading':
       const Tag = `h${block.level || 2}` as keyof JSX.IntrinsicElements;
-      return <Tag className="font-bold text-[#000000] my-6">{block.content}</Tag>;
+      return <Tag className={`font-serif text-brand-dark my-10 ${block.level === 1 ? 'text-4xl' : 'text-3xl'}`}>{block.content}</Tag>;
     case 'paragraph':
-      return <p className="text-[#4d4d4d] leading-relaxed my-4 whitespace-pre-wrap">{block.content}</p>;
+      return <p className="text-brand-dark/70 text-lg leading-relaxed my-6 font-sans whitespace-pre-wrap">{block.content}</p>;
     case 'image':
       return (
-        <figure className="my-8">
-          <img src={block.content} alt="" className="w-full rounded-xl shadow-lg" />
+        <figure className="my-12">
+          <img src={block.content} alt="" className="w-full rounded-3xl shadow-2xl border border-gray-100" />
         </figure>
       );
     case 'video':
       return (
-        <div className="my-8 aspect-video rounded-xl overflow-hidden shadow-lg bg-black">
-          {/* Simple embed logic or placeholder */}
+        <div className="my-12 aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black border border-gray-100">
           <iframe 
             src={block.content.replace('watch?v=', 'embed/')} 
             className="w-full h-full"
@@ -45,11 +44,11 @@ const RenderBlock = ({ block }: { block: Block }) => {
       );
     case 'list':
       return (
-        <ul className="my-6 space-y-2">
+        <ul className="my-8 space-y-4">
           {block.content.map((item: string, i: number) => (
-            <li key={i} className="flex items-start gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0F3D2E] mt-2.5 flex-shrink-0"></span>
-              <span className="text-[#4d4d4d]">{item}</span>
+            <li key={i} className="flex items-start gap-4">
+              <span className="w-2 h-2 rounded-full bg-brand-emerald mt-2.5 flex-shrink-0 shadow-sm shadow-brand-emerald/40"></span>
+              <span className="text-brand-dark/70 text-lg font-sans">{item}</span>
             </li>
           ))}
         </ul>

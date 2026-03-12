@@ -1,145 +1,209 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Search, Tag, ChevronRight, Calendar } from "lucide-react";
+import { ArrowRight, Calendar, Tag, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-export default async function BlogPage() {
-  const { data: posts } = await supabase
-    .from('blog_posts')
-    .select('*, categories(name)')
-    .eq('is_published', true)
-    .order('created_at', { ascending: false });
+const fallbackPosts = [
+  { id: "1", title: "Why Lekki is Nigeria's fastest-growing real estate market", excerpt: "Discover the driving forces behind Lekki's explosive property demand and what it means for investors in 2025.", banner_image: "/hero_background.jpg", created_at: "2025-01-12", categories: { name: "Investment" } },
+  { id: "2", title: "5 things to check before signing any property agreement", excerpt: "Protect yourself from common pitfalls — our legal team outlines the most critical due diligence steps.", banner_image: "/hero_background.jpg", created_at: "2025-02-05", categories: { name: "Buying Guide" } },
+  { id: "3", title: "Modern vibes: today's most sought-after interior design trends", excerpt: "From open-plan living to rooftop terraces — the architectural must-haves dominating high-end Nigerian homes.", banner_image: "/hero_background.jpg", created_at: "2025-02-22", categories: { name: "Design" } },
+  { id: "4", title: "Understanding the difference between C of O and R of O in Nigeria", excerpt: "A comprehensive guide to property ownership documents and what each means for your investment security.", banner_image: "/hero_background.jpg", created_at: "2025-03-01", categories: { name: "Legal" } },
+  { id: "5", title: "Abuja vs Lagos: which city offers better ROI on real estate?", excerpt: "We analyze transaction data, infrastructure growth, and demand signals across both capital cities.", banner_image: "/hero_background.jpg", created_at: "2025-03-08", categories: { name: "Investment" } },
+  { id: "6", title: "The complete guide to renting in Lagos for new professionals", excerpt: "Navigating the Lagos rental market is tough. Here's everything you need to know as a first-time renter.", banner_image: "/hero_background.jpg", created_at: "2025-03-10", categories: { name: "Rent" } },
+];
 
-  const { data: categories } = await supabase
-    .from('categories')
-    .select('*')
-    .eq('type', 'blog');
+export default function BlogPage() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [recentPosts, setRecentPosts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { data: recentPosts } = await supabase
-    .from('blog_posts')
-    .select('id, title, created_at, banner_image')
-    .eq('is_published', true)
-    .order('created_at', { ascending: false })
-    .limit(5);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data: postsData } = await supabase
+        .from("blog_posts")
+        .select("*, categories(name)")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+
+      const { data: recentData } = await supabase
+        .from("blog_posts")
+        .select("id, title, created_at, banner_image")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false })
+        .limit(4);
+
+      const { data: catsData } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("type", "blog");
+
+      if (postsData && postsData.length > 0) setPosts(postsData);
+      else setPosts(fallbackPosts);
+
+      if (recentData && recentData.length > 0) setRecentPosts(recentData);
+      else setRecentPosts(fallbackPosts.slice(0, 4));
+
+      if (catsData) setCategories(catsData);
+      
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   return (
-    <main className="min-h-screen font-sans bg-[#f7f7f7]">
+    <>
       <Header />
-      
-      {/* Hero Section */}
-      <section className="relative h-[40vh] flex flex-col justify-center pt-20 overflow-hidden">
-        <div className="absolute inset-0 z-0 text-[#0F3D2E]">
-          <div className="absolute inset-0 bg-[#0F3D2E]"></div>
-          {/* Subtle noise texture */}
-          <div className="absolute inset-0 opacity-[0.15] pointer-events-none mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
-        </div>
-        
-        <div className="container mx-auto px-4 lg:px-24 relative z-10">
-            <h1 className="text-5xl md:text-7xl font-black text-white mb-4 tracking-tighter">
-                Proptee Journal
-            </h1>
-            <p className="text-[#1F7A5C] font-bold text-lg uppercase tracking-[0.2em]">Trends, Insights & Luxury Living</p>
-        </div>
-      </section>
+      <main className="bg-white min-h-screen">
 
-      {/* Main Blog Layout */}
-      <div className="py-20">
-        <div className="container mx-auto px-4 lg:px-12 flex flex-col lg:flex-row gap-16">
-           
-           {/* Left Content: Post Grid */}
-           <div className="lg:w-2/3">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                {posts?.map((post) => (
-                  <article key={post.id} className="group bg-white rounded-[32px] overflow-hidden shadow-sm border border-[#E0E0E0]/50 flex flex-col hover:shadow-xl transition-all duration-500">
-                     <div className="relative h-64 overflow-hidden p-3">
-                        <div className="relative w-full h-full rounded-[24px] overflow-hidden">
-                             {post.banner_image ? (
-                               <Image 
-                                 src={post.banner_image} 
-                                 alt={post.title} 
-                                 fill 
-                                 className="object-cover group-hover:scale-105 transition-transform duration-1000"
-                               />
-                             ) : (
-                               <div className="w-full h-full bg-[#F2F2F2] flex items-center justify-center text-[#0F3D2E]">
-                                 <Tag size={32} />
-                               </div>
-                             )}
-                             <div className="absolute top-4 left-4 z-10 bg-[#0F3D2E] text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
-                               {post.categories?.name || 'News'}
-                             </div>
-                        </div>
-                     </div>
+        {/* ── Page Banner ── */}
+        <section
+          className="relative pt-40 pb-24 flex items-center"
+          style={{ background: "url('/hero_background.jpg') center center / cover no-repeat" }}
+        >
+          <div className="absolute inset-0 bg-brand-dark/70" />
+          <div className="container max-w-[1140px] mx-auto px-6 relative z-10">
+            <p className="text-brand-emerald font-black uppercase tracking-[0.4em] text-xs mb-4">Our Journal</p>
+            <h1 className="text-5xl md:text-7xl font-serif text-white leading-tight mb-4">Latest Articles</h1>
+            <p className="text-white/60 text-lg font-sans">
+              Trends, insights, and stories from Nigeria's property market.
+            </p>
+          </div>
+        </section>
 
-                     <div className="p-8 flex flex-col flex-1">
-                        <div className="flex items-center gap-2 text-[#6B7280] text-xs font-bold uppercase tracking-widest mb-4">
-                           <Calendar size={14} /> {new Date(post.created_at).toLocaleDateString()}
+        {/* ── Blog Layout: Posts + Sidebar ── */}
+        <section className="py-20 bg-[#f9f9f9]">
+          <div className="container max-w-[1140px] mx-auto px-6">
+            
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-32">
+                <Loader2 className="animate-spin text-brand-emerald mb-4" size={40} />
+                <p className="text-brand-dark/40 font-black uppercase tracking-widest text-[10px]">Loading Journal...</p>
+              </div>
+            ) : (
+              <div className="flex flex-col lg:flex-row gap-12">
+
+                {/* ── Left: Post Grid ── */}
+                <div className="lg:w-2/3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {posts.map((post: any) => (
+                      <article key={post.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 group hover:shadow-lg transition-all duration-500 flex flex-col">
+                        {/* Image */}
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          {post.banner_image ? (
+                            <Image
+                              src={post.banner_image}
+                              alt={post.title}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-700"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                              <Tag size={28} className="text-gray-300" />
+                            </div>
+                          )}
+                          <div className="absolute top-4 left-4 bg-brand-emerald text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
+                            {post.categories?.name || "News"}
+                          </div>
                         </div>
-                        
-                        <h2 className="font-bold text-[#000000] mb-4 text-2xl leading-tight">
-                           <Link href={`/blog/${post.id}`} className="hover:text-[#0F3D2E] transition-colors line-clamp-2">
-                             {post.title}
-                           </Link>
-                        </h2>
-                        
-                        <p className="text-[#6B7280] text-sm leading-relaxed mb-8 flex-1 line-clamp-3">
-                           {post.excerpt}
-                        </p>
-                        
-                        <Link href={`/blog/${post.id}`} className="inline-flex items-center gap-2 text-[#000000] font-black text-xs uppercase tracking-widest hover:text-[#0F3D2E] transition-colors mt-auto group/btn">
-                           Explore Post <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                        </Link>
-                     </div>
-                  </article>
-                ))}
-                {(!posts || posts.length === 0) && (
-                  <div className="md:col-span-2 text-center py-20 bg-white rounded-3xl border border-dashed border-[#E0E0E0]">
-                    <p className="text-[#6B7280] font-bold">No articles published yet.</p>
+
+                        <div className="p-6 flex flex-col flex-1">
+                          <div className="flex items-center gap-2 text-brand-dark/40 text-xs font-bold uppercase tracking-wider mb-4">
+                            <Calendar size={14} />
+                            {new Date(post.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                          </div>
+                          <h2 className="text-brand-dark font-serif text-xl mb-3 leading-snug group-hover:text-brand-emerald transition-colors line-clamp-2 flex-1">
+                            <Link href={`/blog/${post.id}`}>{post.title}</Link>
+                          </h2>
+                          <p className="text-brand-dark/50 text-sm font-sans leading-relaxed mb-6 line-clamp-2">{post.excerpt}</p>
+                          <Link
+                            href={`/blog/${post.id}`}
+                            className="inline-flex items-center gap-2 text-brand-emerald text-xs font-black uppercase tracking-widest hover:gap-3 transition-all"
+                          >
+                            Read Article <ArrowRight size={14} />
+                          </Link>
+                        </div>
+                      </article>
+                    ))}
                   </div>
-                )}
-             </div>
-           </div>
+                </div>
 
-           {/* Right Sidebar */}
-           <div className="lg:w-1/3 flex flex-col gap-12">
-             <div className="bg-white p-8 rounded-[32px] border border-[#E0E0E0] shadow-sm">
-                <h3 className="text-xl font-bold text-[#000000] mb-8">Recent Stories</h3>
-                <div className="flex flex-col gap-8">
-                   {recentPosts?.map(post => (
-                      <Link href={`/blog/${post.id}`} key={post.id} className="flex items-center gap-4 group">
-                         <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 bg-[#F2F2F2]">
-                            {post.banner_image && <Image src={post.banner_image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />}
-                         </div>
-                         <div className="flex flex-col gap-1">
-                            <span className="text-[#0F3D2E] font-bold text-[10px] uppercase tracking-widest">{new Date(post.created_at).toLocaleDateString()}</span>
-                            <h4 className="text-sm font-bold text-[#000000] group-hover:text-[#0F3D2E] transition-colors leading-tight line-clamp-2">
-                               {post.title}
+                {/* ── Right Sidebar ── */}
+                <div className="lg:w-1/3 flex flex-col gap-8">
+
+                  {/* Recent Posts */}
+                  <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+                    <h3 className="text-xl font-serif text-brand-dark mb-6 pb-4 border-b border-gray-100">Recent Posts</h3>
+                    <div className="flex flex-col gap-6">
+                      {recentPosts.map((post: any) => (
+                        <Link key={post.id} href={`/blog/${post.id}`} className="flex items-start gap-4 group">
+                          <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                            {post.banner_image && (
+                              <Image src={post.banner_image} alt={post.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-brand-emerald text-[10px] font-black uppercase tracking-widest">
+                              {new Date(post.created_at).toLocaleDateString()}
+                            </span>
+                            <h4 className="text-sm font-bold text-brand-dark group-hover:text-brand-emerald transition-colors leading-snug line-clamp-2 font-sans">
+                              {post.title}
                             </h4>
-                         </div>
-                      </Link>
-                   ))}
-                </div>
-             </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
 
-             <div className="bg-white p-8 rounded-[32px] border border-[#E0E0E0] shadow-sm">
-                <h3 className="text-xl font-bold text-[#000000] mb-6">Categories</h3>
-                <div className="flex flex-wrap gap-3">
-                   {categories?.map(cat => (
-                      <Link href={`/blog?category=${cat.id}`} key={cat.id} className="bg-[#F2F2F2] text-[#000000] px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[#0F3D2E] hover:text-white transition-all">
-                         {cat.name}
-                      </Link>
-                   ))}
-                </div>
-             </div>
-           </div>
-           
-        </div>
-      </div>
+                  {/* Categories */}
+                  <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
+                    <h3 className="text-xl font-serif text-brand-dark mb-6 pb-4 border-b border-gray-100">Categories</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {(categories && categories.length > 0
+                        ? categories
+                        : [{ id: "1", name: "Investment" }, { id: "2", name: "Buying Guide" }, { id: "3", name: "Design" }, { id: "4", name: "Legal" }, { id: "5", name: "Rent" }]
+                      ).map((cat: any) => (
+                        <Link
+                          key={cat.id}
+                          href={`/blog?category=${cat.id}`}
+                          className="bg-[#f9f9f9] text-brand-dark text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg border border-gray-200 hover:bg-brand-emerald hover:text-white hover:border-brand-emerald transition-all"
+                        >
+                          {cat.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
 
+                  {/* Newsletter */}
+                  <div className="bg-brand-dark rounded-2xl p-8">
+                    <h3 className="text-xl font-serif text-white mb-2">Property Updates</h3>
+                    <p className="text-white/40 text-sm font-sans mb-6">Get off-market opportunities bi-weekly.</p>
+                    <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
+                      <input
+                        type="email"
+                        placeholder="Your email address"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/30 outline-none focus:border-brand-emerald transition-colors"
+                      />
+                      <button className="bg-brand-emerald text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-brand-emerald-muted transition-all">
+                        Subscribe
+                      </button>
+                    </form>
+                  </div>
+
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }
