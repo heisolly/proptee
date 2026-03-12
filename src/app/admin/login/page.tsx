@@ -22,7 +22,7 @@ export default function LoginPage() {
     // Artificial delay for feedback
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "proptee";
+    const adminPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "242424";
     if (password === adminPassword) {
       document.cookie = "admin_auth=true; path=/; max-age=86400";
       router.push("/admin");
