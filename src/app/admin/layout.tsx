@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import { 
   BarChart3, 
   Home, 
@@ -13,17 +13,17 @@ import {
   LogOut, 
   Menu, 
   X,
-  PlusCircle,
-  FolderOpen,
   LayoutDashboard,
   Building2,
   Newspaper,
   Layers,
   Bell,
   Search,
-  UserCircle
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+  UserCircle,
+  ShieldCheck,
+  Command
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminLayout({
   children,
@@ -37,11 +37,11 @@ export default function AdminLayout({
 
   useEffect(() => {
     const checkAuth = () => {
-      const cookies = document.cookie.split(';');
-      const authCookie = cookies.find(c => c.trim().startsWith('admin_auth='));
+      const cookies = document.cookie.split(";");
+      const authCookie = cookies.find(c => c.trim().startsWith("admin_auth="));
       
-      if (!authCookie && pathname !== '/admin/login') {
-        router.push('/admin/login');
+      if (!authCookie && pathname !== "/admin/login") {
+        router.push("/admin/login");
         setIsAuthenticated(false);
       } else {
         setIsAuthenticated(true);
@@ -51,57 +51,58 @@ export default function AdminLayout({
   }, [pathname, router]);
 
   const handleLogout = () => {
-    document.cookie = 'admin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-    router.push('/admin/login');
+    document.cookie = "admin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+    router.push("/admin/login");
   };
 
-  if (pathname === '/admin/login') {
+  if (pathname === "/admin/login") {
     return <>{children}</>;
   }
 
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F2F2F2]">
-        <div className="w-12 h-12 border-4 border-[#0F3D2E] border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-12 h-12 border-2 border-brand-emerald rounded-xl flex items-center justify-center text-brand-emerald"
+        >
+          <Command size={24} />
+        </motion.div>
       </div>
     );
   }
 
   const navItems = [
-    { name: 'Insights', href: '/admin', icon: LayoutDashboard },
-    { name: 'Properties', href: '/admin/properties', icon: Building2 },
-    { name: 'The Team', href: '/admin/agents', icon: Users },
-    { name: 'Journal', href: '/admin/blog', icon: Newspaper },
-    { name: 'Taxonomy', href: '/admin/categories', icon: Layers },
-    { name: 'Settings', href: '/admin/settings', icon: Settings },
+    { name: "Executive Suite", href: "/admin", icon: LayoutDashboard },
+    { name: "Asset Portfolio", href: "/admin/properties", icon: Building2 },
+    { name: "Advisory Team", href: "/admin/agents", icon: Users },
+    { name: "Editorial HQ", href: "/admin/blog", icon: Newspaper },
+    { name: "System Taxonomy", href: "/admin/categories", icon: Layers },
+    { name: "Control Tower", href: "/admin/settings", icon: Settings },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex font-sans overflow-hidden">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-[#FDFDFD] flex font-sans overflow-hidden">
+      {/* ── Cinematic Sidebar ── */}
       <motion.aside 
         initial={false}
-        animate={{ width: isSidebarOpen ? 280 : 88 }}
-        className="bg-[#000000] text-white flex flex-col fixed h-full z-50 shadow-[10px_0_40px_rgba(0,0,0,0.05)] border-r border-white/5"
+        animate={{ width: isSidebarOpen ? 320 : 100 }}
+        className="bg-brand-dark text-white flex flex-col fixed h-full z-50 shadow-[20px_0_80px_rgba(0,0,0,0.1)] border-r border-white/5"
       >
-        {/* Sidebar Header */}
-        <div className="h-24 flex items-center px-6 mb-4 border-b border-white/5">
+        {/* Sidebar Branding */}
+        <div className="h-32 flex items-center px-10 mb-6 relative">
           <AnimatePresence mode="wait">
             {isSidebarOpen ? (
               <motion.div 
                 key="logo-full"
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                className="flex items-center gap-3 overflow-hidden"
+                exit={{ opacity: 0, x: -20 }}
+                className="flex items-center gap-4"
               >
-                <div className="relative w-36 h-10">
-                  <Image 
-                    src="/logo.png" 
-                    alt="Proptee Logo" 
-                    fill 
-                    className="object-contain" 
-                  />
+                <div className="relative w-44 h-12">
+                  <Image src="/logo.png" alt="Proptee" fill className="object-contain" />
                 </div>
               </motion.div>
             ) : (
@@ -110,48 +111,44 @@ export default function AdminLayout({
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="relative w-10 h-10 mx-auto"
+                className="mx-auto w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10"
               >
-                <Image 
-                  src="/logo.png" 
-                  alt="Proptee Logo" 
-                  fill 
-                  className="object-contain" 
-                />
+                <span className="text-xl font-serif text-brand-emerald">P</span>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="flex-1 px-4 space-y-2 overflow-y-auto no-scrollbar pt-4">
+        {/* Navigation Fabric */}
+        <nav className="flex-1 px-6 space-y-3 overflow-y-auto no-scrollbar pt-6">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`group relative flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 ${
+                className={`group relative flex items-center gap-6 px-6 py-5 rounded-[2rem] transition-all duration-500 ${
                   isActive 
-                    ? 'bg-gradient-to-r from-[#0F3D2E] to-[#1F7A5C] text-white shadow-[0_8px_20px_rgba(15,61,46,0.3)]' 
-                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                    ? "bg-white/10 text-white shadow-xl shadow-black/20" 
+                    : "text-gray-500 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <item.icon size={22} className={`${isActive ? 'text-white' : 'group-hover:text-white'} transition-colors duration-300`} />
+                <div className={`${isActive ? "text-brand-emerald" : "group-hover:text-brand-emerald"} transition-colors duration-500`}>
+                  <item.icon size={22} strokeWidth={isActive ? 2 : 1.5} />
+                </div>
                 {isSidebarOpen && (
                   <motion.span 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="font-bold text-sm tracking-wide uppercase"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-[10px] font-black uppercase tracking-[0.2em]"
                   >
                     {item.name}
                   </motion.span>
                 )}
-                {/* Active Indicator Bar */}
                 {isActive && (
                   <motion.div 
-                    layoutId="active-nav"
-                    className="absolute left-0 w-1 h-6 bg-white rounded-r-full"
+                    layoutId="admin-active-nav"
+                    className="absolute left-0 w-2 h-12 bg-brand-emerald rounded-r-3xl"
                   />
                 )}
               </Link>
@@ -159,85 +156,78 @@ export default function AdminLayout({
           })}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/5 mb-4">
+        {/* Sidebar Utility */}
+        <div className="p-8 border-t border-white/5 mt-auto">
           <button 
             onClick={handleLogout}
-            className={`group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all w-full text-gray-500 hover:bg-red-500/10 hover:text-red-500`}
+            className="group flex items-center gap-6 px-6 py-5 rounded-[2rem] transition-all w-full text-gray-500 hover:bg-red-500/10 hover:text-red-500"
           >
-            <LogOut size={22} />
+            <LogOut size={22} strokeWidth={1.5} />
             {isSidebarOpen && (
-              <span className="font-bold text-sm tracking-wide uppercase">Logout</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Exit Portal</span>
             )}
           </button>
         </div>
       </motion.aside>
 
-      {/* Toggle Button for Desktop */}
+      {/* ── Desktop Orchestrator ── */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed bottom-10 left-[260px] z-[60] bg-white text-[#000000] p-3 rounded-2xl shadow-2xl border border-gray-100 hover:scale-110 active:scale-95 transition-all"
-        style={{ left: isSidebarOpen ? '255px' : '65px' }}
+        className="fixed bottom-12 left-[300px] z-[60] bg-white text-brand-dark p-4 rounded-3xl shadow-2xl border border-gray-100 hover:scale-110 active:scale-95 transition-all"
+        style={{ left: isSidebarOpen ? "300px" : "80px" }}
       >
-        {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
+        {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Main Content Area */}
+      {/* ── Operations Canopy ── */}
       <main 
-        className={`flex-1 min-h-screen transition-all duration-500 ${
-          isSidebarOpen ? 'pl-[280px]' : 'pl-[88px]'
+        className={`flex-1 min-h-screen transition-all duration-700 ${
+          isSidebarOpen ? "pl-[320px]" : "pl-[100px]"
         }`}
       >
-        {/* Header */}
-        <header className="h-24 bg-white/80 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-10 sticky top-0 z-40">
-          <div className="flex flex-col">
-            <h2 className="text-2xl font-black text-[#000000] tracking-tight truncate uppercase">
-              {navItems.find(item => pathname === item.href)?.name || 'Dashboard'}
+        {/* Header Console */}
+        <header className="h-32 bg-white/80 backdrop-blur-2xl border-b border-gray-50 flex items-center justify-between px-16 sticky top-0 z-40">
+          <div>
+            <h2 className="text-3xl font-serif text-brand-dark tracking-tight capitalize">
+              {navItems.find(item => pathname === item.href)?.name || "Operations Center"}
             </h2>
-            <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
-              Admin Portal <span className="w-1 h-1 rounded-full bg-gray-300"></span> 
-              {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-[0.3em] text-brand-dark/30 mt-2">
+              <ShieldCheck size={12} className="text-brand-emerald" /> Proptee Secure Node • {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
           </div>
 
-          <div className="flex items-center gap-8">
-            {/* Search Bar Placeholder */}
-            <div className="hidden md:flex items-center bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 gap-3 w-64 group focus-within:w-80 focus-within:border-[#1F7A5C] transition-all duration-500">
-               <Search size={18} className="text-gray-400 group-focus-within:text-[#1F7A5C]" />
-               <input type="text" placeholder="Global search..." className="bg-transparent text-sm font-medium outline-none text-[#000000] placeholder:text-gray-400" />
+          <div className="flex items-center gap-10">
+            <div className="hidden lg:flex items-center bg-gray-50/50 border border-gray-100 rounded-[2rem] px-8 py-4 gap-4 w-80 group focus-within:w-[400px] focus-within:bg-white focus-within:border-brand-emerald/20 transition-all duration-700 shadow-sm focus-within:shadow-xl focus-within:shadow-brand-emerald/5">
+                <Search size={18} className="text-gray-300 group-focus-within:text-brand-emerald transition-colors" />
+                <input type="text" placeholder="Global system search..." className="bg-transparent text-sm font-medium outline-none text-brand-dark placeholder:text-gray-300 w-full" />
             </div>
 
-            <button className="relative w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-white hover:text-[#1F7A5C] transition-all border border-gray-100 hover:shadow-xl group">
-               <Bell size={20} />
-               <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
-
-            <div className="flex items-center gap-4 pl-8 border-l border-gray-100">
+            <div className="flex items-center gap-6 pl-10 border-l border-gray-100">
               <div className="flex flex-col items-end">
-                <span className="text-sm font-black text-[#000000] uppercase tracking-tighter">Administrator</span>
-                <span className="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Proptee Hub</span>
+                <span className="text-[10px] font-black text-brand-dark uppercase tracking-[0.2em]">Administrative Elite</span>
+                <span className="text-[9px] text-brand-emerald font-black tracking-widest uppercase">Node 0x242424</span>
               </div>
-              <div className="relative group">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#0F3D2E] to-[#1F7A5C] p-0.5 shadow-xl group-hover:rotate-6 transition-transform">
-                  <div className="w-full h-full rounded-[14px] bg-white p-0.5">
-                    <div className="w-full h-full rounded-[12px] bg-gray-100 overflow-hidden flex items-center justify-center">
-                       <UserCircle size={40} className="text-gray-300" />
+              <div className="relative group cursor-pointer">
+                <div className="w-16 h-16 rounded-[1.8rem] bg-brand-dark p-[2px] transition-transform duration-700 group-hover:rotate-12 shadow-xl shadow-brand-dark/10">
+                  <div className="w-full h-full rounded-[1.6rem] bg-white p-[2px]">
+                    <div className="w-full h-full rounded-[1.4rem] bg-gray-50 flex items-center justify-center text-gray-200">
+                       <UserCircle size={48} />
                     </div>
                   </div>
                 </div>
-                <div className="absolute bottom-[-2px] right-[-2px] w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-lg"></div>
+                <div className="absolute top-0 right-0 w-4 h-4 bg-brand-emerald rounded-full border-4 border-white shadow-lg animate-pulse" />
               </div>
             </div>
           </div>
         </header>
 
-        {/* Content Wrapper */}
-        <div className="p-10 max-w-7xl mx-auto">
+        {/* Context Canvas */}
+        <div className="p-16 max-w-[1600px] mx-auto min-h-[calc(100vh-128px)]">
           <motion.div
             key={pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            initial={{ opacity: 0, scale: 0.98, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             {children}
           </motion.div>

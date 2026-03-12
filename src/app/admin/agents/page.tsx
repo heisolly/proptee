@@ -1,13 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Plus, Search, Mail, Phone, Edit, Trash2, X } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { 
+  Plus, 
+  Search, 
+  Mail, 
+  Phone, 
+  Trash2, 
+  X,
+  User,
+  ShieldCheck,
+  Building2,
+  ChevronRight,
+  MoreVertical,
+  Activity
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AgentsPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAgent, setCurrentAgent] = useState<any>(null);
 
@@ -18,9 +32,9 @@ export default function AgentsPage() {
   const fetchAgents = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('agents')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("agents")
+      .select("*")
+      .order("created_at", { ascending: false });
     
     if (!error) setAgents(data || []);
     setLoading(false);
@@ -30,16 +44,16 @@ export default function AgentsPage() {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const agentData = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      bio: formData.get('bio'),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      bio: formData.get("bio"),
     };
 
     if (currentAgent) {
-      await supabase.from('agents').update(agentData).eq('id', currentAgent.id);
+      await supabase.from("agents").update(agentData).eq("id", currentAgent.id);
     } else {
-      await supabase.from('agents').insert([agentData]);
+      await supabase.from("agents").insert([agentData]);
     }
 
     setIsModalOpen(false);
@@ -48,8 +62,8 @@ export default function AgentsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this agent?')) {
-      await supabase.from('agents').delete().eq('id', id);
+    if (confirm("Permanently remove this agent profile from the ecosystem?")) {
+      await supabase.from("agents").delete().eq("id", id);
       fetchAgents();
     }
   };
@@ -60,163 +74,190 @@ export default function AgentsPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-xl border border-[#E0E0E0] shadow-sm">
-        <div className="relative w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280]" size={18} />
+    <div className="space-y-10">
+      {/* ── Header Control ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div className="relative w-full md:w-[400px] group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-brand-emerald transition-colors" size={18} />
           <input
             type="text"
-            placeholder="Search agents..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E0E0E0] focus:ring-2 focus:ring-[#0F3D2E] focus:border-transparent outline-none"
+            placeholder="Search the elite team..."
+            className="w-full pl-14 pr-6 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-brand-emerald/20 outline-none transition-all text-sm font-medium"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        
         <button 
           onClick={() => { setCurrentAgent(null); setIsModalOpen(true); }}
-          className="bg-[#0F3D2E] text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-[#1F7A5C] transition-colors"
+          className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-brand-dark text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-brand-emerald transition-all shadow-xl shadow-brand-dark/10 group active:scale-95"
         >
-          <Plus size={18} /> Add Agent
+          <Plus size={16} className="group-hover:rotate-90 transition-transform duration-500" /> 
+          Appoint Agent
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#E0E0E0] shadow-sm overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-[#F2F2F2] border-b border-[#E0E0E0]">
-            <tr>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Agent</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Contact</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Joined Date</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000] text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F2F2F2]">
-            {loading ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-[#6B7280]">Loading agents...</td>
-              </tr>
-            ) : filteredAgents.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-6 py-8 text-center text-[#6B7280]">No agents found.</td>
-              </tr>
-            ) : (
-              filteredAgents.map((agent) => (
-                <tr key={agent.id} className="hover:bg-[#F2F2F2]/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#0F3D2E] flex items-center justify-center text-white font-bold">
-                        {agent.name.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-[#000000]">{agent.name}</p>
-                        <p className="text-xs text-[#6B7280] line-clamp-1 max-w-[200px]">{agent.bio || 'No bio provided'}</p>
-                      </div>
+      {/* ── Agents Grid ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {loading ? (
+          [1, 2, 3].map(i => (
+            <div key={i} className="bg-white p-10 rounded-[3rem] border border-gray-100 animate-pulse">
+              <div className="w-20 h-20 bg-gray-100 rounded-full mb-6 mx-auto" />
+              <div className="h-6 bg-gray-100 rounded w-48 mx-auto mb-4" />
+              <div className="h-4 bg-gray-100 rounded w-32 mx-auto" />
+            </div>
+          ))
+        ) : filteredAgents.length === 0 ? (
+          <div className="col-span-full py-20 text-center text-brand-dark/30 font-serif italic text-2xl">
+            No agents found meeting the current query.
+          </div>
+        ) : (
+          filteredAgents.map((agent) => (
+            <motion.div 
+              key={agent.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-sm hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.06)] transition-all relative group overflow-hidden"
+            >
+              {/* Background Accent */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-emerald/5 rounded-bl-full translate-x-12 -translate-y-12 group-hover:translate-x-0 group-hover:-translate-y-0 transition-transform duration-700" />
+              
+              <div className="relative z-10 flex flex-col items-center">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#0F3D2E] to-[#1F7A5C] p-1 shadow-xl mb-6 group-hover:scale-105 transition-transform">
+                  <div className="w-full h-full rounded-full bg-white p-1">
+                    <div className="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-brand-emerald overflow-hidden uppercase font-serif text-3xl">
+                      {agent.name.charAt(0)}
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm text-[#000000]">
-                        <Mail size={14} className="text-[#6B7280]" /> {agent.email}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-[#000000]">
-                        <Phone size={14} className="text-[#6B7280]" /> {agent.phone || 'N/A'}
-                      </div>
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-serif text-brand-dark mb-1">{agent.name}</h3>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-emerald mb-8 bg-brand-emerald/5 px-3 py-1 rounded-full">
+                  <ShieldCheck size={12} /> Certified Partner
+                </div>
+
+                <div className="w-full space-y-4 mb-10">
+                  <div className="flex items-center gap-4 text-brand-dark/60">
+                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center">
+                      <Mail size={16} />
                     </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#6B7280]">
-                    {new Date(agent.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button 
-                        onClick={() => { setCurrentAgent(agent); setIsModalOpen(true); }}
-                        className="p-2 text-[#0F3D2E] hover:bg-[#0F3D2E]/10 rounded-lg transition-colors"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(agent.id)}
-                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                    <span className="text-sm font-medium truncate">{agent.email}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-brand-dark/60">
+                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center">
+                      <Phone size={16} />
                     </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                    <span className="text-sm font-medium">{agent.phone || "No secure line"}</span>
+                  </div>
+                </div>
+
+                <div className="w-full flex gap-3">
+                  <button 
+                    onClick={() => { setCurrentAgent(agent); setIsModalOpen(true); }}
+                    className="flex-1 py-4 rounded-2xl bg-gray-50 text-brand-dark text-[10px] font-black uppercase tracking-widest hover:bg-brand-emerald hover:text-white transition-all"
+                  >
+                    Edit Profile
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(agent.id)}
+                    className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))
+        )}
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden border border-[#E0E0E0]">
-            <div className="p-6 border-b border-[#E0E0E0] flex justify-between items-center bg-[#F2F2F2]">
-              <h3 className="text-xl font-bold text-[#000000]">
-                {currentAgent ? 'Edit Agent' : 'Add New Agent'}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#6B7280] hover:text-[#000000]">
-                <X size={24} />
-              </button>
-            </div>
-            <form onSubmit={handleSave} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-[#000000] mb-1">Full Name</label>
-                <input 
-                  name="name"
-                  defaultValue={currentAgent?.name}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-[#E0E0E0] outline-none focus:ring-2 focus:ring-[#0F3D2E]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-[#000000] mb-1">Email Address</label>
-                <input 
-                  type="email"
-                  name="email"
-                  defaultValue={currentAgent?.email}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-[#E0E0E0] outline-none focus:ring-2 focus:ring-[#0F3D2E]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-[#000000] mb-1">Phone Number</label>
-                <input 
-                  name="phone"
-                  defaultValue={currentAgent?.phone}
-                  className="w-full px-4 py-2 rounded-lg border border-[#E0E0E0] outline-none focus:ring-2 focus:ring-[#0F3D2E]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-[#000000] mb-1">Biography</label>
-                <textarea 
-                  name="bio"
-                  rows={3}
-                  defaultValue={currentAgent?.bio}
-                  className="w-full px-4 py-2 rounded-lg border border-[#E0E0E0] outline-none focus:ring-2 focus:ring-[#0F3D2E]"
-                />
-              </div>
-              <div className="pt-4 flex gap-4">
+      {/* ── Modal ── */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-brand-dark/40 backdrop-blur-md"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100"
+            >
+              <div className="p-10 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+                <div>
+                  <h3 className="text-2xl font-serif text-brand-dark">
+                    {currentAgent ? "Refine Profile" : "Register Agent"}
+                  </h3>
+                  <p className="text-[10px] text-brand-dark/30 font-black uppercase tracking-widest mt-1">Personnel Ecosystem</p>
+                </div>
                 <button 
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-3 rounded-lg border border-[#E0E0E0] font-bold text-[#000000] hover:bg-[#F2F2F2] transition-colors"
+                  onClick={() => setIsModalOpen(false)} 
+                  className="w-12 h-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-brand-dark transition-all"
                 >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  className="flex-1 py-3 rounded-lg bg-[#0F3D2E] text-white font-bold hover:bg-[#1F7A5C] transition-colors shadow-lg"
-                >
-                  {currentAgent ? 'Update Agent' : 'Create Agent'}
+                  <X size={20} />
                 </button>
               </div>
-            </form>
+
+              <form onSubmit={handleSave} className="p-10 space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-brand-dark/40 mb-2 ml-1">Legal Full Name</label>
+                  <input 
+                    name="name"
+                    defaultValue={currentAgent?.name}
+                    required
+                    placeholder="e.g. Emmanuel Cole"
+                    className="w-full bg-gray-50 border border-transparent py-4 px-6 rounded-2xl outline-none focus:bg-white focus:border-brand-emerald/20 transition-all text-sm font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-brand-dark/40 mb-2 ml-1">Secure Email</label>
+                  <input 
+                    type="email"
+                    name="email"
+                    defaultValue={currentAgent?.email}
+                    required
+                    placeholder="name@proptee.com"
+                    className="w-full bg-gray-50 border border-transparent py-4 px-6 rounded-2xl outline-none focus:bg-white focus:border-brand-emerald/20 transition-all text-sm font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-brand-dark/40 mb-2 ml-1">Communication Line</label>
+                  <input 
+                    name="phone"
+                    defaultValue={currentAgent?.phone}
+                    placeholder="+234 ..."
+                    className="w-full bg-gray-50 border border-transparent py-4 px-6 rounded-2xl outline-none focus:bg-white focus:border-brand-emerald/20 transition-all text-sm font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-brand-dark/40 mb-2 ml-1">Professional Biography</label>
+                  <textarea 
+                    name="bio"
+                    rows={3}
+                    defaultValue={currentAgent?.bio}
+                    placeholder="Tell the brand's story..."
+                    className="w-full bg-gray-50 border border-transparent py-4 px-6 rounded-2xl outline-none focus:bg-white focus:border-brand-emerald/20 transition-all text-sm font-medium resize-none"
+                  />
+                </div>
+                <div className="pt-6">
+                  <button 
+                    type="submit"
+                    className="w-full py-5 rounded-[1.5rem] bg-brand-dark text-white font-black uppercase tracking-[0.2em] text-[10px] hover:bg-brand-emerald transition-all shadow-xl shadow-brand-dark/10 active:scale-[0.98]"
+                  >
+                    {currentAgent ? "Finalize Changes" : "Confirm Appointment"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

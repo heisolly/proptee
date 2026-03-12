@@ -1,16 +1,27 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { Plus, Search, Home, MapPin, DollarSign, Edit, Trash2, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { 
+  Building2, 
+  Search, 
+  Home, 
+  MapPin, 
+  Trash2, 
+  CheckCircle, 
+  Clock, 
+  X,
+  ExternalLink,
+  ChevronRight,
+  Filter
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function PropertiesPage() {
   const [listings, setListings] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentListing, setCurrentListing] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedListing, setSelectedListing] = useState<any>(null);
 
   useEffect(() => {
     fetchData();
@@ -18,34 +29,27 @@ export default function PropertiesPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [listingsRes, categoriesRes] = await Promise.all([
-      supabase.from('listings').select('*, profiles(full_name), categories(name)').order('created_at', { ascending: false }),
-      supabase.from('categories').select('id, name').eq('type', 'listing')
-    ]);
+    const { data, error } = await supabase
+      .from("listings")
+      .select("*, profiles(full_name), categories(name)")
+      .order("created_at", { ascending: false });
 
-    if (!listingsRes.error) setListings(listingsRes.data || []);
-    if (!categoriesRes.error) setCategories(categoriesRes.data || []);
+    if (!error) setListings(data || []);
     setLoading(false);
   };
 
   const handleUpdateStatus = async (id: string, status: string) => {
-    const { error } = await supabase.from('listings').update({ status }).eq('id', id);
-    if (!error) fetchData();
-  };
-
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this listing?')) {
-      await supabase.from('listings').delete().eq('id', id);
+    const { error } = await supabase.from("listings").update({ status }).eq("id", id);
+    if (!error) {
       fetchData();
+      setSelectedListing(null);
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'approved': return <CheckCircle size={16} className="text-[#1F7A5C]" />;
-      case 'pending': return <Clock size={16} className="text-yellow-500" />;
-      case 'rejected': return <XCircle size={16} className="text-red-500" />;
-      default: return null;
+  const handleDelete = async (id: string) => {
+    if (confirm("Permanently archive this asset? This action cannot be undone.")) {
+      await supabase.from("listings").delete().eq("id", id);
+      fetchData();
     }
   };
 
@@ -55,186 +59,220 @@ export default function PropertiesPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-xl border border-[#E0E0E0] shadow-sm">
-        <div className="relative w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280]" size={18} />
+    <div className="space-y-10">
+      {/* ── Control Bar ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div className="relative w-full md:w-[400px] group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-brand-emerald transition-colors" size={18} />
           <input
             type="text"
-            placeholder="Search listings..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E0E0E0] focus:ring-2 focus:ring-[#0F3D2E] focus:border-transparent outline-none"
+            placeholder="Search assets by title or location..."
+            className="w-full pl-14 pr-6 py-4 rounded-2xl bg-gray-50 border border-transparent focus:bg-white focus:border-brand-emerald/20 outline-none transition-all text-sm font-medium"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button 
-          onClick={() => { setCurrentListing(null); setIsModalOpen(true); }}
-          className="bg-[#0F3D2E] text-white px-6 py-2 rounded-lg font-semibold flex items-center gap-2 hover:bg-[#1F7A5C] transition-colors"
-        >
-          <Plus size={18} /> Add Property
-        </button>
+        
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 rounded-2xl border border-gray-100 text-xs font-black uppercase tracking-widest text-brand-dark/40 hover:text-brand-dark transition-all">
+            <Filter size={16} /> Filters
+          </button>
+          <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-brand-dark text-white text-[10px] font-black uppercase tracking-[0.2em] hover:bg-brand-emerald transition-all shadow-xl shadow-brand-dark/10">
+            Initiate Induction
+          </button>
+        </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#E0E0E0] shadow-sm overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-[#F2F2F2] border-b border-[#E0E0E0]">
-            <tr>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Property</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Price & Type</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Status</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000]">Agent</th>
-              <th className="px-6 py-4 text-sm font-bold text-[#000000] text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F2F2F2]">
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-[#6B7280]">Loading listings...</td>
+      {/* ── Asset Table ── */}
+      <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-50/50">
+                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-brand-dark/30">Asset Identity</th>
+                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-brand-dark/30">Valuation</th>
+                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-brand-dark/30">Status</th>
+                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-brand-dark/30">Representative</th>
+                <th className="px-10 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-brand-dark/30 text-right">Protocol</th>
               </tr>
-            ) : filteredListings.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-[#6B7280]">No properties found.</td>
-              </tr>
-            ) : (
-              filteredListings.map((listing) => (
-                <tr key={listing.id} className="hover:bg-[#F2F2F2]/50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg bg-[#F2F2F2] flex items-center justify-center text-[#0F3D2E]">
-                        <Home size={24} />
-                      </div>
-                      <div>
-                        <p className="font-bold text-[#000000]">{listing.title}</p>
-                        <p className="text-xs text-[#6B7280] flex items-center gap-1">
-                          <MapPin size={12} /> {listing.address || 'No address'}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <p className="font-bold text-[#0F3D2E]">${listing.price.toLocaleString()}</p>
-                    <p className="text-xs uppercase font-bold text-[#6B7280]">{listing.type}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                      listing.status === 'approved' ? 'bg-[#1F7A5C]/10 text-[#1F7A5C]' : 
-                      listing.status === 'pending' ? 'bg-yellow-50 text-yellow-600' : 'bg-red-50 text-red-600'
-                    }`}>
-                      {getStatusIcon(listing.status)}
-                      {listing.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#000000]">
-                    {listing.profiles?.full_name || 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      {listing.status === 'pending' && (
-                        <>
-                          <button 
-                            onClick={() => handleUpdateStatus(listing.id, 'approved')}
-                            className="p-2 text-[#1F7A5C] hover:bg-[#1F7A5C]/10 rounded-lg transition-colors"
-                            title="Approve"
-                          >
-                            <CheckCircle size={18} />
-                          </button>
-                          <button 
-                            onClick={() => handleUpdateStatus(listing.id, 'rejected')}
-                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Reject"
-                          >
-                            <XCircle size={18} />
-                          </button>
-                        </>
-                      )}
-                      <button 
-                        onClick={() => handleDelete(listing.id)}
-                        className="p-2 text-gray-400 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-10 py-20 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-10 h-10 border-4 border-brand-emerald border-t-transparent rounded-full animate-spin" />
+                      <p className="text-[10px] font-black uppercase tracking-widest text-brand-dark/20">Syncing Data...</p>
                     </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : filteredListings.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-10 py-20 text-center text-brand-dark/30 font-serif text-xl italic">
+                    No matching assets found in the current jurisdiction.
+                  </td>
+                </tr>
+              ) : (
+                filteredListings.map((listing) => (
+                  <tr 
+                    key={listing.id} 
+                    className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
+                    onClick={() => setSelectedListing(listing)}
+                  >
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-[1.25rem] bg-gray-50 flex items-center justify-center text-brand-emerald group-hover:bg-white group-hover:shadow-lg transition-all duration-500 overflow-hidden relative">
+                          {listing.images?.[0] ? (
+                            <img src={listing.images[0]} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <Building2 size={24} />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-serif text-lg text-brand-dark group-hover:text-brand-emerald transition-colors">{listing.title}</p>
+                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1.5 mt-1">
+                            <MapPin size={10} /> {listing.city || 'Lagos'}, {listing.state || 'NG'}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <p className="text-sm font-black text-brand-dark">₦{listing.price?.toLocaleString()}</p>
+                      <p className="text-[9px] uppercase font-black text-gray-300 tracking-tighter mt-0.5">{listing.type} • Marketplace</p>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                        listing.status === 'approved' ? 'bg-emerald-50 text-emerald-600' : 
+                        listing.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
+                      }`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${
+                          listing.status === 'approved' ? 'bg-emerald-500' : 
+                          listing.status === 'pending' ? 'bg-amber-500' : 'bg-red-500'
+                        }`} />
+                        {listing.status}
+                      </div>
+                    </td>
+                    <td className="px-10 py-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400">
+                          {listing.profiles?.full_name?.charAt(0) || 'A'}
+                        </div>
+                        <span className="text-xs font-bold text-brand-dark">{listing.profiles?.full_name || 'Anonymous Agent'}</span>
+                      </div>
+                    </td>
+                    <td className="px-10 py-6 text-right">
+                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); handleDelete(listing.id); }}
+                          className="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                        <div className="p-3 text-brand-emerald bg-brand-emerald/5 rounded-xl">
+                          <ChevronRight size={18} />
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden border border-[#E0E0E0] my-8">
-            <div className="p-6 border-b border-[#E0E0E0] flex justify-between items-center bg-[#F2F2F2]">
-              <h3 className="text-xl font-bold text-[#000000]">
-                {currentListing ? 'Edit Property' : 'Add New Property'}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#6B7280] hover:text-[#000000]">
-                <XCircle size={24} />
-              </button>
-            </div>
-      {isModalOpen && currentListing && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-[#E0E0E0] my-8">
-            <div className="p-8 border-b border-[#E0E0E0] flex justify-between items-center bg-[#F2F2F2]">
-              <h3 className="text-xl font-bold text-[#000000]">
-                Property Details
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-[#6B7280] hover:text-[#000000]">
-                <XCircle size={24} />
-              </button>
-            </div>
-            <div className="p-8 space-y-6">
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Title</label>
-                  <p className="font-bold text-[#0F3D2E]">{currentListing.title}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Price</label>
-                  <p className="font-bold text-[#0F3D2E]">₦{currentListing.price?.toLocaleString()}</p>
-                </div>
-                <div className="col-span-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Address</label>
-                  <p className="font-bold text-[#0F3D2E]">{currentListing.address}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Type</label>
-                  <p className="font-bold text-[#0F3D2E] uppercase">{currentListing.type}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Status</label>
-                  <p className="font-bold text-[#0F3D2E] uppercase">{currentListing.status}</p>
-                </div>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Description</label>
-                <p className="text-sm text-gray-600 mt-1 leading-relaxed">{currentListing.description || 'No description provided.'}</p>
-              </div>
-              <div className="pt-6 flex gap-4">
-                <button 
-                  onClick={() => setIsModalOpen(false)} 
-                  className="flex-1 py-4 rounded-2xl border border-[#E0E0E0] font-bold text-[#000000] hover:bg-[#F2F2F2] transition-colors"
-                >
-                  Close
-                </button>
-                {currentListing.status === 'pending' && (
-                  <button 
-                    onClick={() => { handleUpdateStatus(currentListing.id, 'approved'); setIsModalOpen(false); }}
-                    className="flex-1 py-4 rounded-2xl bg-[#0F3D2E] text-white font-bold hover:bg-[#1F7A5C] transition-colors shadow-lg"
-                  >
-                    Approve Property
-                  </button>
+      {/* ── Asset Details Modal ── */}
+      <AnimatePresence>
+        {selectedListing && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedListing(null)}
+              className="absolute inset-0 bg-brand-dark/40 backdrop-blur-md"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-3xl bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100"
+            >
+              <div className="relative h-64 bg-gray-100">
+                {selectedListing.images?.[0] ? (
+                  <img src={selectedListing.images[0]} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-200">
+                    <Building2 size={64} />
+                  </div>
                 )}
+                <button 
+                  onClick={() => setSelectedListing(null)}
+                  className="absolute top-6 right-6 w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-white hover:bg-white hover:text-brand-dark transition-all"
+                >
+                  <X size={20} />
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-black/60 to-transparent">
+                  <h3 className="text-3xl font-serif text-white">{selectedListing.title}</h3>
+                  <p className="text-white/70 text-sm mt-1 flex items-center gap-2">
+                    <MapPin size={14} /> {selectedListing.address}
+                  </p>
+                </div>
               </div>
-            </div>
+
+              <div className="p-10 space-y-8">
+                <div className="grid grid-cols-3 gap-6">
+                  <div className="bg-gray-50 p-6 rounded-3xl">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Financials</p>
+                    <p className="text-lg font-black text-brand-dark">₦{selectedListing.price?.toLocaleString()}</p>
+                  </div>
+                  <div className="bg-gray-50 p-6 rounded-3xl">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Taxonomy</p>
+                    <p className="text-lg font-black text-brand-dark uppercase tracking-tighter italic">{selectedListing.categories?.name || 'Luxury'}</p>
+                  </div>
+                  <div className="bg-gray-50 p-6 rounded-3xl">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Engagement</p>
+                    <p className="text-lg font-black text-brand-dark uppercase tracking-tighter">{selectedListing.type}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Executive Narrative</p>
+                  <p className="text-brand-dark/70 leading-relaxed italic">
+                    {selectedListing.description || "An architectural masterpiece curated for the most discerning expectations. This property represents the pinnacle of contemporary living in Nigeria's most coveted jurisdiction."}
+                  </p>
+                </div>
+
+                <div className="pt-6 flex gap-4">
+                  <button 
+                    onClick={() => setSelectedListing(null)}
+                    className="flex-1 py-5 rounded-2xl border border-gray-100 font-black uppercase tracking-widest text-[10px] text-gray-500 hover:bg-gray-50 transition-colors"
+                  >
+                    Archive View
+                  </button>
+                  {selectedListing.status === "pending" && (
+                    <button 
+                      onClick={() => handleUpdateStatus(selectedListing.id, "approved")}
+                      className="flex-1 py-5 rounded-2xl bg-brand-emerald text-white font-black uppercase tracking-widest text-[10px] hover:bg-brand-dark transition-all shadow-xl shadow-brand-emerald/20"
+                    >
+                      Verify & Publish Asset
+                    </button>
+                  )}
+                  {selectedListing.status === "approved" && (
+                    <button 
+                      onClick={() => handleUpdateStatus(selectedListing.id, "rejected")}
+                      className="flex-1 py-5 rounded-2xl bg-red-500 text-white font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all shadow-xl shadow-red-500/20"
+                    >
+                      Suspend Listing
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
-          </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

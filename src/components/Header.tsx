@@ -64,13 +64,22 @@ export default function Header() {
           {/* ── Right: Integrated Actions ── */}
           <div className="flex items-center gap-4 md:gap-8">
             
-            <div className="hidden lg:flex items-center gap-1">
+            <div className="hidden lg:flex items-center gap-6">
                <button className={`p-2 rounded-full transition-colors ${scrolled ? "text-brand-dark hover:bg-gray-100" : "text-white hover:bg-white/10"}`}>
                  <Globe size={16} strokeWidth={1.5} />
                </button>
-               <Link href="/login" className={`flex items-center gap-2 p-2 rounded-full transition-colors ${scrolled ? "text-brand-dark hover:bg-gray-100" : "text-white hover:bg-white/10"}`}>
-                 <User size={16} strokeWidth={1.5} />
-               </Link>
+               <div className="flex items-center gap-3">
+                 <Link href="/login" className={`text-[10px] font-black uppercase tracking-widest pl-2 pr-1 ${scrolled ? "text-brand-dark/60 hover:text-brand-emerald" : "text-white/60 hover:text-white"}`}>
+                   Sign In
+                 </Link>
+                 <Link href="/signup" className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
+                   scrolled 
+                     ? "border-brand-dark/10 text-brand-dark hover:bg-brand-dark hover:text-white" 
+                     : "border-white/20 text-white hover:bg-white hover:text-brand-dark"
+                 }`}>
+                   Join Us
+                 </Link>
+               </div>
             </div>
 
             <div className="h-4 w-[1px] bg-gray-200/20 hidden md:block" />
