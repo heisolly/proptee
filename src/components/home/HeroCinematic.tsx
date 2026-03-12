@@ -23,7 +23,7 @@ export default function HeroCinematic() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-serif text-white leading-tight mb-6"
+            className="text-4xl md:text-5xl lg:text-7xl font-serif text-white leading-[1.1] mb-6 px-4"
           >
             Find Your Dream Home With Ease
           </motion.h1>
@@ -32,7 +32,7 @@ export default function HeroCinematic() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-white/80 text-lg mb-10 leading-relaxed font-sans"
+            className="text-white/90 text-base md:text-lg mb-10 leading-relaxed font-sans px-4"
           >
             Experience seamless property transactions with our expert team. We provide comprehensive support for buying and selling, ensuring your real estate journey is smooth and successful.
           </motion.p>
@@ -42,14 +42,15 @@ export default function HeroCinematic() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-white rounded-full flex flex-col md:flex-row items-stretch overflow-visible shadow-2xl"
+            className="bg-white rounded-[2rem] md:rounded-full flex flex-col md:flex-row items-stretch mx-4 md:mx-0 shadow-2xl"
           >
             {/* Purpose */}
-            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-100">
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-100 flex items-center pl-2 md:pl-0">
+              <SlidersHorizontal size={18} className="ml-6 text-gray-400 shrink-0" />
               <select
                 value={purpose}
                 onChange={(e) => setPurpose(e.target.value)}
-                className="w-full h-full px-6 py-5 text-brand-dark text-sm font-medium bg-transparent border-none focus:ring-0 appearance-none cursor-pointer"
+                className="w-full h-full px-4 py-5 md:py-6 text-brand-dark text-sm font-medium bg-transparent border-none focus:ring-0 appearance-none cursor-pointer"
               >
                 <option value="">Purpose</option>
                 <option value="buy">Buy</option>
@@ -59,12 +60,12 @@ export default function HeroCinematic() {
             </div>
 
             {/* Location */}
-            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-100 flex items-center">
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-100 flex items-center pl-2 md:pl-0">
               <MapPin size={18} className="ml-6 text-gray-400 shrink-0" />
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full h-full px-4 py-5 text-brand-dark text-sm font-medium bg-transparent border-none focus:ring-0 appearance-none cursor-pointer"
+                className="w-full h-full px-4 py-5 md:py-6 text-brand-dark text-sm font-medium bg-transparent border-none focus:ring-0 appearance-none cursor-pointer"
               >
                 <option value="">Location</option>
                 <option value="lekki">Lekki</option>
@@ -76,12 +77,12 @@ export default function HeroCinematic() {
             </div>
 
             {/* Type */}
-            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-100 flex items-center">
+            <div className="flex-1 border-b md:border-b-0 md:border-r border-gray-100 flex items-center pl-2 md:pl-0">
               <Building2 size={18} className="ml-6 text-gray-400 shrink-0" />
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full h-full px-4 py-5 text-brand-dark text-sm font-medium bg-transparent border-none focus:ring-0 appearance-none cursor-pointer"
+                className="w-full h-full px-4 py-5 md:py-6 text-brand-dark text-sm font-medium bg-transparent border-none focus:ring-0 appearance-none cursor-pointer"
               >
                 <option value="">Type</option>
                 <option value="house">House</option>
@@ -95,7 +96,7 @@ export default function HeroCinematic() {
             {/* Search Button */}
             <Link
               href={`/properties?purpose=${purpose}&location=${location}&type=${type}`}
-              className="bg-brand-emerald text-white flex items-center justify-center gap-3 px-10 py-5 font-bold text-sm hover:bg-brand-emerald-muted transition-all rounded-full md:rounded-l-none md:rounded-r-full m-0"
+              className="bg-brand-emerald text-white flex items-center justify-center gap-3 px-10 py-5 font-bold text-sm hover:bg-brand-emerald-muted transition-all rounded-[2rem] md:rounded-l-none md:rounded-r-full m-2 md:m-0 shadow-lg md:shadow-none"
             >
               <Search size={20} />
               <span>Search</span>
