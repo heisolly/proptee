@@ -13,7 +13,9 @@ import {
   X,
   ExternalLink,
   ChevronRight,
-  Filter
+  Filter,
+  Edit2,
+  Save
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -22,6 +24,9 @@ export default function PropertiesPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedListing, setSelectedListing] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState<any>({});
+  const [updateLoading, setUpdateLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -51,6 +56,29 @@ export default function PropertiesPage() {
       await supabase.from("listings").delete().eq("id", id);
       fetchData();
     }
+  };
+
+  const handleSaveEdit = async () => {
+    setUpdateLoading(true);
+    const { error } = await supabase
+      .from("listings")
+      .update({
+        title: editForm.title,
+        price: editForm.price,
+        address: editForm.address,
+        type: editForm.type,
+        description: editForm.description
+      })
+      .eq("id", selectedListing.id);
+      
+    if (!error) {
+      setSelectedListing({ ...selectedListing, ...editForm });
+      setIsEditing(false);
+      fetchData();
+    } else {
+      alert("Error saving: " + error.message);
+    }
+    setUpdateLoading(false);
   };
 
   const filteredListings = listings.filter(l => 
@@ -117,7 +145,11 @@ export default function PropertiesPage() {
                   <tr 
                     key={listing.id} 
                     className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
-                    onClick={() => setSelectedListing(listing)}
+                    onClick={() => {
+                      setSelectedListing(listing);
+                      setEditForm(listing);
+                      setIsEditing(false);
+                    }}
                   >
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-6">
@@ -214,18 +246,64 @@ export default function PropertiesPage() {
                   <X size={20} />
                 </button>
                 <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-black/60 to-transparent">
-                  <h3 className="text-3xl font-serif text-white">{selectedListing.title}</h3>
-                  <p className="text-white/70 text-sm mt-1 flex items-center gap-2">
-                    <MapPin size={14} /> {selectedListing.address}
-                  </p>
+                  {isEditing ? (
+                    <input 
+                      type="text" 
+                      value={editForm.title || ""} 
+                      onChange={e => setEditForm({...editForm, title: e.target.value})}
+                      className="text-3xl font-serif text-brand-dark bg-white/90 px-3 py-1 rounded w-full mb-2 outline-none"
+                    />
+                  ) : (
+                    <h3 className="text-3xl font-serif text-white">{selectedListing.title}</h3>
+                  )}
+                  {isEditing ? (
+                    <input 
+                      type="text" 
+                      value={editForm.address || ""} 
+                      onChange={e => setEditForm({...editForm, address: e.target.value})}
+                      className="text-brand-dark text-sm bg-white/90 px-3 py-1 rounded w-full outline-none"
+                    />
+                  ) : (
+                    <p className="text-white/70 text-sm mt-1 flex items-center gap-2">
+                      <MapPin size={14} /> {selectedListing.address}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="p-10 space-y-8">
+                <div className="flex justify-end">
+                  {isEditing ? (
+                    <button 
+                      onClick={handleSaveEdit}
+                      disabled={updateLoading}
+                      className="flex items-center gap-2 bg-brand-emerald text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow hover:bg-brand-dark transition-all disabled:opacity-50"
+                    >
+                      {updateLoading ? 'Saving...' : <><Save size={14} /> Save Changes</>}
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => setIsEditing(true)}
+                      className="flex items-center gap-2 bg-gray-50 text-brand-dark border border-gray-200 px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:border-brand-emerald hover:text-brand-emerald transition-all shadow-sm"
+                    >
+                      <Edit2 size={14} /> Edit Asset
+                    </button>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-3 gap-6">
                   <div className="bg-gray-50 p-6 rounded-3xl">
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Financials</p>
-                    <p className="text-lg font-black text-brand-dark">₦{selectedListing.price?.toLocaleString()}</p>
+                    {isEditing ? (
+                      <input 
+                        type="number" 
+                        value={editForm.price || ""} 
+                        onChange={e => setEditForm({...editForm, price: parseFloat(e.target.value) || 0})}
+                        className="text-lg font-black text-brand-dark bg-white border border-gray-200 px-3 py-1.5 rounded-xl w-full outline-none focus:border-brand-emerald"
+                      />
+                    ) : (
+                      <p className="text-lg font-black text-brand-dark">₦{selectedListing.price?.toLocaleString()}</p>
+                    )}
                   </div>
                   <div className="bg-gray-50 p-6 rounded-3xl">
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Taxonomy</p>
@@ -233,15 +311,32 @@ export default function PropertiesPage() {
                   </div>
                   <div className="bg-gray-50 p-6 rounded-3xl">
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Engagement</p>
-                    <p className="text-lg font-black text-brand-dark uppercase tracking-tighter">{selectedListing.type}</p>
+                    {isEditing ? (
+                      <input 
+                        type="text" 
+                        value={editForm.type || ""} 
+                        onChange={e => setEditForm({...editForm, type: e.target.value})}
+                        className="text-lg font-black text-brand-dark uppercase tracking-tighter bg-white border border-gray-200 px-3 py-1.5 rounded-xl w-full outline-none focus:border-brand-emerald"
+                      />
+                    ) : (
+                      <p className="text-lg font-black text-brand-dark uppercase tracking-tighter">{selectedListing.type}</p>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Executive Narrative</p>
-                  <p className="text-brand-dark/70 leading-relaxed italic">
-                    {selectedListing.description || "An architectural masterpiece curated for the most discerning expectations. This property represents the pinnacle of contemporary living in Nigeria's most coveted jurisdiction."}
-                  </p>
+                  {isEditing ? (
+                    <textarea 
+                      value={editForm.description || ""} 
+                      onChange={e => setEditForm({...editForm, description: e.target.value})}
+                      className="text-brand-dark/70 leading-relaxed italic bg-white border border-gray-200 p-4 rounded-2xl w-full min-h-[120px] outline-none focus:border-brand-emerald resize-none"
+                    />
+                  ) : (
+                    <p className="text-brand-dark/70 leading-relaxed italic">
+                      {selectedListing.description || "An architectural masterpiece curated for the most discerning expectations. This property represents the pinnacle of contemporary living in Nigeria's most coveted jurisdiction."}
+                    </p>
+                  )}
                 </div>
 
                 <div className="pt-6 flex gap-4">
