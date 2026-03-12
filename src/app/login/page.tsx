@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ArrowRight, Eye, EyeOff, ShieldCheck, User, Globe, Layout } from "lucide-react";
+import { Lock, ArrowRight, Eye, EyeOff, ShieldCheck, User } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-export default function LoginPage() {
+function LoginContent() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -42,18 +42,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      {/* ── Background Aesthetics ── */}
-      <div className="absolute inset-0 z-0">
-        <Image 
-          src="/proptee_entrance_narrative_1773291875530.png" 
-          alt="Background" 
-          fill 
-          className="object-cover opacity-[0.03] scale-110 grayscale"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-white/40 to-brand-emerald/5" />
-      </div>
-
+    <>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -168,6 +157,27 @@ export default function LoginPage() {
           <Link href="/contact" className="text-[10px] font-bold text-gray-300 uppercase tracking-widest hover:text-gray-400 transition-colors">Support</Link>
         </div>
       </motion.div>
+    </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* ── Background Aesthetics ── */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/proptee_entrance_narrative_1773291875530.png" 
+          alt="Background" 
+          fill 
+          className="object-cover opacity-[0.03] scale-110 grayscale"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-white/40 to-brand-emerald/5" />
+      </div>
+
+      <Suspense fallback={<div className="relative z-10 w-full max-w-[440px] h-96 bg-white/50 backdrop-blur rounded-[2.5rem] animate-pulse" />}>
+        <LoginContent />
+      </Suspense>
     </div>
   );
 }
