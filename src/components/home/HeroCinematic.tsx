@@ -23,7 +23,8 @@ export default function HeroCinematic() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-5xl lg:text-7xl font-serif text-white leading-[1.1] mb-6 px-4"
+            className="text-5xl md:text-6xl lg:text-8xl text-white leading-[1.15] mb-6 px-4"
+            style={{ fontFamily: "var(--font-handwriting), 'Dancing Script', cursive" }}
           >
             Find Your Dream Home With Ease
           </motion.h1>
