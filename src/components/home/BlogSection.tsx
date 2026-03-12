@@ -35,52 +35,56 @@ const posts = [
 
 export default function BlogSection() {
   return (
-    <section className="py-24 bg-white">
-      <div className="container max-w-[1140px] mx-auto px-6">
+    <section className="py-16 md:py-24 bg-white">
+      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto">
 
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-4xl font-serif text-brand-dark">Related Posts</h2>
+        <div className="flex items-center justify-between mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-4xl font-serif text-brand-dark tracking-tight">Related Posts</h2>
           <Link
             href="/blog"
-            className="bg-brand-emerald text-white px-8 py-3.5 rounded-lg text-sm font-bold hover:bg-brand-emerald-muted transition-all"
+            className="luxury-button text-xs md:text-sm"
           >
             Read More
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {posts.map((post, i) => (
-            <motion.article
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="group"
-            >
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-6">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <div>
-                <p className="text-brand-emerald text-[11px] font-black uppercase tracking-[0.3em] mb-3 font-sans">
-                  {post.category} / {post.date}
-                </p>
-                <Link href={post.href}>
-                  <h4 className="text-xl font-serif text-brand-dark mb-3 leading-snug group-hover:text-brand-emerald transition-colors line-clamp-2">
-                    {post.title}
-                  </h4>
-                </Link>
-                <p className="text-brand-dark/50 text-sm font-sans leading-relaxed line-clamp-2">
-                  {post.excerpt}
-                </p>
-              </div>
-            </motion.article>
-          ))}
+        {/* Horizontal scroll on mobile, grid on desktop */}
+        <div className="-mx-5 px-5 md:mx-0 md:px-0">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:pb-0">
+            {posts.map((post, i) => (
+              <motion.article
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="card-base overflow-hidden group snap-start min-w-[260px] w-[80vw] md:w-auto md:min-w-0 flex-shrink-0 md:flex-shrink-initial"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    sizes="(max-width: 768px) 80vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <div className="p-4 md:p-5">
+                  <p className="text-brand-emerald text-[11px] font-semibold uppercase tracking-wider mb-2 font-sans">
+                    {post.category} &middot; {post.date}
+                  </p>
+                  <Link href={post.href}>
+                    <h4 className="text-base md:text-lg font-sans font-semibold text-brand-dark mb-2 leading-snug group-hover:text-brand-emerald transition-colors line-clamp-2">
+                      {post.title}
+                    </h4>
+                  </Link>
+                  <p className="text-brand-muted text-sm font-sans leading-relaxed line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                </div>
+              </motion.article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

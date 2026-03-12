@@ -29,38 +29,39 @@ export default function TestimonialsSection() {
   const next = () => setCurrent((c) => (c + 1) % testimonials.length);
 
   return (
-    <section className="py-24 bg-[#f9f9f9]">
-      <div className="container max-w-[1140px] mx-auto px-6">
+    <section className="py-16 md:py-24 bg-brand-bg">
+      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto">
         <div className="max-w-3xl mx-auto text-center">
 
           <AnimatePresence mode="wait">
             <motion.div
               key={current}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4 }}
             >
-              <div className="flex justify-center mb-6">
-                <Quote size={80} className="text-brand-emerald opacity-20" strokeWidth={1} />
+              <div className="flex justify-center mb-4 md:mb-6">
+                <Quote size={48} className="text-brand-emerald opacity-15 md:w-20 md:h-20" strokeWidth={1} />
               </div>
 
-              <p className="text-brand-dark/70 text-xl leading-relaxed font-sans italic mb-10">
+              <p className="text-brand-dark/70 text-lg md:text-xl leading-relaxed font-sans italic mb-8 md:mb-10 px-2">
                 "{testimonials[current].quote}"
               </p>
 
               <div>
-                <p className="font-bold text-brand-dark font-sans">{testimonials[current].name}</p>
+                <p className="font-semibold text-brand-dark font-sans">{testimonials[current].name}</p>
                 <p className="text-brand-emerald text-sm font-medium">{testimonials[current].role}</p>
               </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Controls */}
-          <div className="flex items-center justify-center gap-4 mt-10">
+          {/* Controls — thumb-friendly 48px targets */}
+          <div className="flex items-center justify-center gap-4 mt-8 md:mt-10">
             <button
               onClick={prev}
-              className="w-12 h-12 rounded-full border border-brand-dark/10 hover:border-brand-emerald hover:bg-brand-emerald hover:text-white text-brand-dark flex items-center justify-center transition-all"
+              className="w-12 h-12 rounded-full border border-[#e2e8f0] hover:border-brand-emerald hover:bg-brand-emerald hover:text-white text-brand-dark flex items-center justify-center transition-all active:scale-95"
+              aria-label="Previous testimonial"
             >
               <ChevronLeft size={20} />
             </button>
@@ -69,13 +70,15 @@ export default function TestimonialsSection() {
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`transition-all rounded-full ${i === current ? "w-8 h-3 bg-brand-emerald" : "w-3 h-3 bg-brand-dark/10"}`}
+                  className={`transition-all rounded-full min-w-[12px] min-h-[12px] ${i === current ? "w-8 h-3 bg-brand-emerald" : "w-3 h-3 bg-gray-200"}`}
+                  aria-label={`Go to testimonial ${i + 1}`}
                 />
               ))}
             </div>
             <button
               onClick={next}
-              className="w-12 h-12 rounded-full border border-brand-dark/10 hover:border-brand-emerald hover:bg-brand-emerald hover:text-white text-brand-dark flex items-center justify-center transition-all"
+              className="w-12 h-12 rounded-full border border-[#e2e8f0] hover:border-brand-emerald hover:bg-brand-emerald hover:text-white text-brand-dark flex items-center justify-center transition-all active:scale-95"
+              aria-label="Next testimonial"
             >
               <ChevronRight size={20} />
             </button>

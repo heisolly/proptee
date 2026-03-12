@@ -1,21 +1,32 @@
-import type { Metadata } from "next";
-import { Playfair_Display, Space_Grotesk, Dancing_Script } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Playfair_Display, Dancing_Script } from "next/font/google";
 import "@/styles/globals.css";
+import BottomNav from "@/components/BottomNav";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
-});
-
-const space = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space",
+  display: "swap",
 });
 
 const dancing = Dancing_Script({
   subsets: ["latin"],
   variable: "--font-handwriting",
+  display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#ffffff",
+};
 
 export const metadata: Metadata = {
   title: "Proptee | Premium Real Estate",
@@ -33,8 +44,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${playfair.variable} ${space.variable} ${dancing.variable} font-sans bg-brand-bg text-brand-dark antialiased selection:bg-brand-gold-pale selection:text-brand-gold`}>
+      <body className={`${inter.variable} ${playfair.variable} ${dancing.variable} font-sans bg-brand-bg text-brand-dark antialiased`}>
         {children}
+        <BottomNav />
       </body>
     </html>
   );

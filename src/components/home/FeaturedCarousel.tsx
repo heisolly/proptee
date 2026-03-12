@@ -31,73 +31,77 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
   const displayProperties = properties.length > 0 ? properties : fallback;
 
   return (
-    <section className="py-24 bg-[#f9f9f9]">
-      <div className="container max-w-[1140px] mx-auto px-6">
+    <section className="py-16 md:py-24 bg-brand-bg">
+      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto">
 
-        <h2 className="text-4xl font-serif text-brand-dark mb-12">Popular Properties</h2>
+        <h2 className="text-3xl md:text-4xl font-serif text-brand-dark mb-8 md:mb-12 tracking-tight">Popular Properties</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayProperties.map((prop, i) => (
-            <motion.div
-              key={prop.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: (i % 3) * 0.1 }}
-              className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500 group"
-            >
-              {/* Image */}
-              <Link href={`/properties/${prop.id}`} className="block relative aspect-[4/3] overflow-hidden">
-                <Image
-                  src={prop.images?.[0] || "/hero_background.jpg"}
-                  alt={prop.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                {/* Type Badge */}
-                <div className="absolute top-4 left-4 bg-brand-emerald text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                  {prop.listing_type || "For Sale"}
-                </div>
-              </Link>
-
-              {/* Info */}
-              <div className="p-6">
-                <p className="text-brand-emerald text-2xl font-serif font-medium mb-1">
-                  {formatPrice(prop.price)}
-                  <span className="text-brand-dark/40 text-base font-sans font-normal"> {prop.listing_type === "For Rent" ? "/month" : ""}</span>
-                </p>
-                <Link href={`/properties/${prop.id}`}>
-                  <h3 className="text-brand-dark text-xl font-serif mb-2 hover:text-brand-emerald transition-colors line-clamp-1">
-                    {prop.title}
-                  </h3>
+        {/* Horizontal scroll on mobile, grid on desktop */}
+        <div className="-mx-5 px-5 md:mx-0 md:px-0">
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
+            {displayProperties.map((prop, i) => (
+              <motion.div
+                key={prop.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: (i % 3) * 0.08 }}
+                className="card-base overflow-hidden group snap-start min-w-[280px] w-[85vw] md:w-auto md:min-w-0 flex-shrink-0 md:flex-shrink-initial"
+              >
+                {/* Image */}
+                <Link href={`/properties/${prop.id}`} className="block relative aspect-[4/3] overflow-hidden min-h-0">
+                  <Image
+                    src={prop.images?.[0] || "/hero_background.jpg"}
+                    alt={prop.title}
+                    fill
+                    sizes="(max-width: 768px) 85vw, (max-width: 1024px) 45vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {/* Type Badge */}
+                  <div className="absolute top-3 left-3 bg-brand-emerald text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg">
+                    {prop.listing_type || "For Sale"}
+                  </div>
                 </Link>
-                <p className="text-brand-dark/50 text-sm font-sans mb-5 line-clamp-1">{prop.address}</p>
 
-                {/* Specs */}
-                <div className="border-t border-gray-100 pt-4 flex items-center gap-6">
-                  <div className="flex items-center gap-2 text-brand-dark/60">
-                    <BedDouble size={18} className="text-brand-emerald" />
-                    <span className="text-sm font-medium">{prop.beds} bed</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-brand-dark/60">
-                    <Bath size={18} className="text-brand-emerald" />
-                    <span className="text-sm font-medium">{prop.baths} bath</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-brand-dark/60">
-                    <Maximize2 size={18} className="text-brand-emerald" />
-                    <span className="text-sm font-medium">{prop.sqft} m²</span>
+                {/* Info */}
+                <div className="p-4 md:p-5">
+                  <p className="text-brand-emerald text-xl md:text-2xl font-semibold font-sans mb-1">
+                    {formatPrice(prop.price)}
+                    <span className="text-brand-muted text-sm font-normal"> {prop.listing_type === "For Rent" ? "/mo" : ""}</span>
+                  </p>
+                  <Link href={`/properties/${prop.id}`}>
+                    <h3 className="text-brand-dark text-lg font-sans font-semibold mb-1 hover:text-brand-emerald transition-colors line-clamp-1">
+                      {prop.title}
+                    </h3>
+                  </Link>
+                  <p className="text-brand-muted text-sm font-sans mb-4 line-clamp-1">{prop.address}</p>
+
+                  {/* Specs */}
+                  <div className="border-t border-[#e2e8f0] pt-3 flex items-center gap-4 md:gap-6">
+                    <div className="flex items-center gap-1.5 text-brand-dark-muted">
+                      <BedDouble size={16} className="text-brand-emerald" />
+                      <span className="text-sm font-medium">{prop.beds}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-brand-dark-muted">
+                      <Bath size={16} className="text-brand-emerald" />
+                      <span className="text-sm font-medium">{prop.baths}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-brand-dark-muted">
+                      <Maximize2 size={16} className="text-brand-emerald" />
+                      <span className="text-sm font-medium">{prop.sqft} m²</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* View All */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-10 md:mt-16">
           <Link
             href="/properties"
-            className="bg-brand-emerald text-white px-10 py-5 rounded-lg text-sm font-bold hover:bg-brand-emerald-muted transition-all inline-block shadow-lg shadow-brand-emerald/10"
+            className="luxury-button"
           >
             View All Properties
           </Link>

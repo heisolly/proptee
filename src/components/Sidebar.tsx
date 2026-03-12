@@ -97,23 +97,23 @@ export default function FullNav({ isOpen, onClose }: FullNavProps) {
           </div>
 
           {/* ── Right Column: Interactive Menu ── */}
-          <div className="flex-1 bg-brand-dark flex flex-col p-12 lg:p-24 relative overflow-y-auto overflow-x-hidden scrollbar-hide">
+          <div className="flex-1 bg-brand-dark flex flex-col p-6 md:p-12 lg:p-24 relative overflow-y-auto overflow-x-hidden scrollbar-hide">
             
             {/* Minimal Close Header */}
-            <div className="flex items-center justify-between mb-20 lg:mb-0 lg:absolute lg:top-12 lg:right-16">
+            <div className="flex items-center justify-between mb-12 lg:mb-0 lg:absolute lg:top-12 lg:right-16">
               <Link href="/" onClick={onClose} className="lg:hidden block w-24 h-6 relative">
                  <Image src="/logo.png" alt="Logo" fill className="object-contain brightness-0 invert" />
               </Link>
               
               <button 
                 onClick={onClose}
-                className="group flex items-center gap-6"
+                className="group flex items-center gap-4 md:gap-6"
               >
-                <div className="relative">
+                <div className="relative hidden md:block">
                    <span className="text-[9px] font-black uppercase tracking-[0.5em] text-white/20 group-hover:text-white transition-all duration-500">Close</span>
                    <div className="absolute -bottom-1 left-0 w-0 h-[1px] bg-brand-emerald group-hover:w-full transition-all duration-500" />
                 </div>
-                <div className="w-14 h-14 rounded-full border border-white/5 flex items-center justify-center text-white/30 group-hover:border-brand-emerald group-hover:text-brand-emerald transition-all duration-700">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/5 flex items-center justify-center text-white/30 group-hover:border-brand-emerald group-hover:text-brand-emerald transition-all duration-500 active:scale-90">
                   <X size={20} className="group-hover:rotate-180 transition-transform duration-700" />
                 </div>
               </button>
@@ -121,7 +121,7 @@ export default function FullNav({ isOpen, onClose }: FullNavProps) {
 
             {/* Main Menu Grid */}
             <nav className="flex-1 flex flex-col justify-center">
-              <div className="flex flex-col gap-12 lg:gap-16">
+              <div className="flex flex-col gap-6 md:gap-12 lg:gap-16">
                 {navItems.map((item, i) => (
                   <motion.div 
                     key={item.label}
@@ -136,17 +136,17 @@ export default function FullNav({ isOpen, onClose }: FullNavProps) {
                     <Link 
                       href={item.href}
                       onClick={onClose}
-                      className="group flex items-center justify-between border-b border-white/5 pb-8"
+                      className="group flex items-center justify-between border-b border-white/5 pb-4 md:pb-8 min-h-[56px]"
                     >
-                      <div className="flex items-center gap-10">
-                        <span className="font-serif text-lg text-brand-emerald italic opacity-40 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-4 md:gap-10">
+                        <span className="font-serif text-sm md:text-lg text-brand-emerald italic opacity-40 group-hover:opacity-100 transition-opacity">
                           0{i+1}
                         </span>
-                        <div className="space-y-2">
-                           <h4 className="text-4xl md:text-5xl lg:text-7xl font-serif text-white/40 group-hover:text-white transition-all duration-700 tracking-tighter leading-none">
+                        <div className="space-y-1 md:space-y-2">
+                           <h4 className="text-2xl md:text-5xl lg:text-7xl font-serif text-white/40 group-hover:text-white transition-all duration-500 tracking-tighter leading-none">
                             {item.label}
                           </h4>
-                          <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white/10 group-hover:text-brand-emerald transition-colors">
+                          <p className="text-[9px] font-semibold uppercase tracking-widest text-white/10 group-hover:text-brand-emerald transition-colors">
                             {item.subtitle}
                           </p>
                         </div>
@@ -162,7 +162,7 @@ export default function FullNav({ isOpen, onClose }: FullNavProps) {
             </nav>
 
             {/* Bottom Panel */}
-            <div className="mt-20 lg:mt-32 pt-12 border-t border-white/5 flex flex-wrap items-center justify-between gap-8">
+            <div className="mt-12 md:mt-20 lg:mt-32 pt-8 md:pt-12 border-t border-white/5 flex flex-wrap items-center justify-between gap-6 md:gap-8">
                <div className="flex flex-wrap gap-x-10 gap-y-4">
                  {["Legal Dossier", "Terms of Use", "Agent Access", "Careers"].map((link) => (
                     <Link key={link} href="#" onClick={onClose} className="text-[10px] uppercase tracking-widest font-black text-white/20 hover:text-white transition-colors">

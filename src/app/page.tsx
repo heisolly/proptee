@@ -46,11 +46,11 @@ export default async function Home() {
         {/* 7. CTA Full-Width Banner */}
         <CTABanner />
 
-        {/* Floating WhatsApp */}
+        {/* Floating WhatsApp — above bottom nav on mobile */}
         <Link
           href="https://wa.me/2348000000000"
           target="_blank"
-          className="fixed bottom-8 right-8 z-[90] bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center group"
+          className="fixed bottom-24 md:bottom-8 right-5 md:right-8 z-[90] bg-[#25D366] text-white p-3.5 md:p-4 rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-transform flex items-center justify-center group"
           aria-label="Chat on WhatsApp"
         >
           <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">

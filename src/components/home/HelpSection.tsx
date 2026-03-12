@@ -16,52 +16,54 @@ const points = [
 
 export default function HelpSection() {
   return (
-    <section id="help" className="py-24 bg-white">
-      <div className="container max-w-[1140px] mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+    <section id="help" className="py-16 md:py-24 bg-white">
+      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
 
           {/* Left: Image */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative"
+            transition={{ duration: 0.6 }}
+            className="relative order-2 md:order-1"
           >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]">
+            <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-lg aspect-[4/3]">
               <Image
                 src="/architectural_masterpiece_lagos_day_1773269982392.png"
                 alt="Helping find homes"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
               />
             </div>
             {/* Floating Badge */}
-            <div className="absolute -bottom-6 -right-6 bg-brand-emerald text-white p-6 rounded-2xl shadow-xl">
-              <div className="text-4xl font-serif font-bold leading-none">10K+</div>
-              <div className="text-xs font-black uppercase tracking-widest mt-1 opacity-80">Happy Clients</div>
+            <div className="absolute -bottom-4 right-4 md:-bottom-6 md:-right-6 bg-brand-emerald text-white p-4 md:p-6 rounded-xl md:rounded-2xl shadow-lg">
+              <div className="text-2xl md:text-4xl font-sans font-bold leading-none">10K+</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider mt-1 opacity-80">Happy Clients</div>
             </div>
           </motion.div>
 
           {/* Right: Text */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
+            className="order-1 md:order-2"
           >
-            <h2 className="text-4xl md:text-5xl font-serif text-brand-dark leading-tight mb-6">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-brand-dark leading-tight mb-4 md:mb-6 tracking-tight">
               We Help People Find Their <span className="text-brand-emerald">Dream Homes</span>
             </h2>
-            <p className="text-brand-dark/60 text-lg leading-relaxed mb-8 font-sans">
+            <p className="text-brand-muted text-base md:text-lg leading-relaxed mb-6 md:mb-8 font-sans">
               At Proptee, we go beyond listings. We're your trusted partner through every step of
-              the property journey — from that first search to the final handshake.
+              the property journey.
             </p>
 
-            <ul className="space-y-4 mb-10">
+            <ul className="space-y-3 md:space-y-4 mb-8 md:mb-10">
               {points.map((point, i) => (
-                <li key={i} className="flex items-start gap-4 text-brand-dark/70 font-sans">
-                  <CheckCircle size={20} className="text-brand-emerald mt-0.5 shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-brand-dark-muted font-sans">
+                  <CheckCircle size={18} className="text-brand-emerald mt-0.5 shrink-0" />
                   <span className="text-sm leading-relaxed">{point}</span>
                 </li>
               ))}
@@ -69,7 +71,7 @@ export default function HelpSection() {
 
             <Link
               href="/contact"
-              className="bg-brand-emerald text-white px-10 py-4 rounded-lg font-bold hover:bg-brand-emerald-muted transition-all inline-block shadow-lg shadow-brand-emerald/10"
+              className="luxury-button"
             >
               Get In Touch
             </Link>

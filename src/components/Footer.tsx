@@ -16,17 +16,17 @@ export default function Footer() {
   return (
     <footer className="bg-brand-dark">
       {/* Main Footer */}
-      <div className="container max-w-[1140px] mx-auto px-6 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto py-14 md:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-12">
 
           {/* Logo + About + Contact */}
           <div className="lg:col-span-2">
-            <Link href="/" className="mb-8 block">
-              <div className="relative w-36 h-10">
+            <Link href="/" className="mb-6 block">
+              <div className="relative w-32 h-9 md:w-36 md:h-10">
                 <Image src="/logo.png" alt="Proptee" fill className="object-contain brightness-0 invert" />
               </div>
             </Link>
-            <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mb-8">
+            <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mb-6 md:mb-8">
               Nigeria's most trusted premium real estate platform. Connecting verified buyers, sellers, and agents since 2010.
             </p>
 
@@ -93,8 +93,8 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
-        <div className="container max-w-[1140px] mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/30 font-sans">
-          <p>© {new Date().getFullYear()} Proptee Ng Limited. All Rights Reserved.</p>
+        <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto py-5 md:py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-white/30 font-sans">
+          <p className="text-center md:text-left">© {new Date().getFullYear()} Proptee Ng Limited. All Rights Reserved.</p>
           <div className="flex gap-8">
             <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>

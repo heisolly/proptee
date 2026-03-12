@@ -1,42 +1,34 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
 @theme {
-  /* ── Brand Colors (Enhanced Depth) ── */
-  --color-brand-bg:        #F9F6F1;       
+  /* ── Brand Colors — Apple-esque Clean Palette ── */
+  --color-brand-bg:        #f9fafb;       /* Ultra-clean gray */
   --color-brand-bg-pure:   #FFFFFF;       
-  --color-brand-surface:   #F3EFE9;       
-  --color-brand-dark:      #0C0B0A;       /* Deeper black */
-  --color-brand-dark-muted:#3D3935;       
-  --color-brand-muted:     #8F8881;       
+  --color-brand-surface:   #f3f4f6;       /* Subtle warm gray */
+  --color-brand-dark:      #111827;       /* Charcoal — high contrast */
+  --color-brand-dark-muted:#4b5563;       
+  --color-brand-muted:     #9ca3af;       
 
   /* ── Accents ── */
-  --color-brand-emerald:       #0A5C46;   /* Richer Emerald */
+  --color-brand-emerald:       #0A5C46;   /* Richer Emerald — single vibrant accent */
   --color-brand-emerald-muted: #1A7A5E;
-  --color-brand-emerald-soft:  #EBF5F2;
-  --color-brand-gold:          #8B6508;   /* Deep Bronze Gold */
+  --color-brand-emerald-soft:  #ecfdf5;
+  --color-brand-gold:          #8B6508;
   --color-brand-gold-bright:   #D4A520;
   --color-brand-gold-pale:     #FAF4E6;
 
   /* ── Navigation ── */
-  --color-nav-bg:              #0C0B0A;   /* Dark Nav for Sidebar */
-  --color-brand-border:        rgba(12, 11, 10, 0.08);
+  --color-nav-bg:              #111827;
+  --color-brand-border:        #e2e8f0;   /* Clean 1px border */
 
-  /* ── Brand Colors (Enhanced Depth) ── */
-  --color-brand-bg:        #F2EEE8;       /* Subtle Silk */
-  --color-brand-bg-pure:   #FFFFFF;       
-  --color-brand-surface:   #EAE6DF;       
-  --color-brand-dark:      #0C0B0A;       /* Deeper black */
-  --color-brand-dark-muted:#3D3935;       
-  --color-brand-muted:     #8F8881;       
-
-  /* ── Typography ── */
+  /* ── Typography — Inter system stack ── */
   --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
-  --font-sans:  var(--font-space), "Space Grotesk", system-ui, sans-serif;
+  --font-sans:  "Inter", var(--font-space), "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --font-handwriting: var(--font-handwriting), "Dancing Script", cursive;
 }
 
-/* ── Base Reset ── */
+/* ── Base Reset — Mobile-First ── */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
 
@@ -44,55 +36,81 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 16px; /* Enforce 16px base for readability */
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     background-color: var(--color-brand-bg);
-    background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
-    color: #1A1814;
+    color: var(--color-brand-dark);
     font-family: var(--font-sans);
     overflow-x: hidden;
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    /* Bottom nav safe area */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* High-contrast sans-serif headings with tight letter-spacing */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-serif);
-    color: #1A1814;
+    color: var(--color-brand-dark);
     font-feature-settings: "kern" 1, "liga" 1;
+    letter-spacing: -0.025em;
+  }
+
+  /* Ensure all interactive elements meet 44×44px minimum */
+  button, a, select, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Exclude inline text links from size constraint */
+  p a, li a, span a, td a {
+    min-height: unset;
+    min-width: unset;
   }
 
   ::selection {
-    background: rgba(184, 134, 11, 0.18);
-    color: #B8860B;
+    background: rgba(10, 92, 70, 0.15);
+    color: #0A5C46;
   }
 
-  ::-webkit-scrollbar              { width: 6px; }
-  ::-webkit-scrollbar-track        { background: #F2EDE5; }
-  ::-webkit-scrollbar-thumb        { background: rgba(184,134,11,0.35); border-radius: 10px; }
-  ::-webkit-scrollbar-thumb:hover  { background: rgba(184,134,11,0.65); }
+  ::-webkit-scrollbar              { width: 4px; }
+  ::-webkit-scrollbar-track        { background: #f9fafb; }
+  ::-webkit-scrollbar-thumb        { background: rgba(10,92,70,0.25); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover  { background: rgba(10,92,70,0.45); }
 }
 
 /* ── Utilities ── */
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
-  /* Glass panels — light frosted look */
+  /* ── Glassmorphism panels ── */
   .glass-panel {
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    background: rgba(255,255,255,0.80);
-    border: 1px solid rgba(26,24,20,0.10);
-    border-radius: 1.5rem;
-    box-shadow: 0 8px 32px rgba(26,24,20,0.08);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(255,255,255,0.40);
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.04);
   }
 
   .glass-panel-light {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(255,255,255,0.65);
-    border: 1px solid rgba(26,24,20,0.08);
-    border-radius: 1.5rem;
-    box-shadow: 0 4px 24px rgba(26,24,20,0.06);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.03);
+  }
+
+  /* ── Bottom Navigation Glassmorphism ── */
+  .glass-bottom-nav {
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    background: rgba(255,255,255,0.78);
+    border-top: 1px solid rgba(255,255,255,0.50);
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.06);
   }
 
   /* Gold gradient text */
@@ -103,53 +121,75 @@
     -webkit-text-fill-color: transparent;
   }
 
-  /* Buttons */
+  /* ── Card system — 1px border, 4% shadow depth ── */
+  .card-base {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.02);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .card-base:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.04);
+  }
+
+  /* ── Buttons — with micro-interaction press feedback ── */
   .luxury-button {
     position: relative;
     overflow: hidden;
-    background-color: #1A7A5E;
+    background-color: #0A5C46;
     color: #ffffff;
     font-family: var(--font-sans);
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-radius: 999px;
-    padding: 1rem 2.25rem;
-    transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+    border-radius: 0.875rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    min-height: 48px;
   }
   .luxury-button:hover {
     background-color: #0f5441;
-    transform: scale(1.03);
-    box-shadow: 0 0 30px rgba(26,122,94,0.30);
+    box-shadow: 0 4px 20px rgba(10,92,70,0.25);
   }
-  .luxury-button:active { transform: scale(0.98); }
+  .luxury-button:active {
+    transform: scale(0.97);
+    transition-duration: 0.1s;
+  }
 
   .luxury-button-outline {
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(26,24,20,0.20);
+    border: 1px solid #e2e8f0;
     background: transparent;
-    color: #1A1814;
+    color: var(--color-brand-dark);
     font-family: var(--font-sans);
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-radius: 999px;
-    padding: 1rem 2.25rem;
-    transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+    border-radius: 0.875rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    min-height: 48px;
   }
   .luxury-button-outline:hover {
-    background: rgba(26,24,20,0.06);
-    border-color: rgba(26,24,20,0.40);
-    transform: scale(1.03);
+    background: #f9fafb;
+    border-color: #cbd5e1;
   }
-  .luxury-button-outline:active { transform: scale(0.98); }
+  .luxury-button-outline:active {
+    transform: scale(0.97);
+    transition-duration: 0.1s;
+  }
 
   .luxury-button-gold {
     position: relative;
@@ -157,20 +197,48 @@
     background-color: #B8860B;
     color: #FFFFFF;
     font-family: var(--font-sans);
-    font-weight: 700;
-    letter-spacing: 0.12em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    border-radius: 999px;
-    padding: 1rem 2.25rem;
-    transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+    border-radius: 0.875rem;
+    padding: 0.875rem 1.75rem;
+    font-size: 0.875rem;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    min-height: 48px;
   }
   .luxury-button-gold:hover {
     background-color: #96700A;
-    transform: scale(1.03);
-    box-shadow: 0 0 35px rgba(184,134,11,0.35);
+    box-shadow: 0 4px 20px rgba(184,134,11,0.25);
+  }
+  .luxury-button-gold:active {
+    transform: scale(0.97);
+    transition-duration: 0.1s;
+  }
+
+  /* ── Mobile-first fluid container ── */
+  .mobile-container {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  @media (min-width: 768px) {
+    .mobile-container {
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .mobile-container {
+      max-width: 1140px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
   }
 
   /* Hexagonal Geometric Clipping */
@@ -190,6 +258,33 @@
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+  /* ── Responsive image/table handling for narrow screens ── */
+  .responsive-media {
+    max-width: 100%;
+    height: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Tables on 390px screens: horizontal scroll with snap */
+  .responsive-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+  }
+  .responsive-table-wrapper table {
+    min-width: 600px;
+  }
+
+  /* Wide images: contain within viewport */
+  .responsive-img-contain {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
 }
 
 /* ── Horizontal Scroll ── */
@@ -197,4 +292,14 @@
   display: flex;
   flex-wrap: nowrap;
   width: max-content;
+}
+
+/* ── Safe area for bottom nav on mobile ── */
+@media (max-width: 767px) {
+  main {
+    padding-bottom: 88px; /* Bottom nav height + breathing room */
+  }
+  footer {
+    padding-bottom: 88px;
+  }
 }

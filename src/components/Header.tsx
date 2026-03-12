@@ -14,7 +14,6 @@ export default function Header() {
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
@@ -23,27 +22,24 @@ export default function Header() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 40);
-      
-      // Hide header when scrolling down past 100px, show when scrolling up
+
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsHidden(true);
       } else if (currentScrollY < lastScrollY) {
-         setIsHidden(false);
+        setIsHidden(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
-    
+
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Initial session check
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setUser(session?.user || null);
     };
     checkSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
     });
@@ -53,6 +49,14 @@ export default function Header() {
       subscription.unsubscribe();
     };
   }, [lastScrollY]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const close = () => setDropdownOpen(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [dropdownOpen]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -75,155 +79,174 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 w-full ${
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 w-full hidden md:block ${
           isHidden ? "-translate-y-full" : "translate-y-0"
         } ${
-          scrolled 
-            ? "bg-white/90 backdrop-blur-xl py-4 border-b border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]" 
-            : "bg-transparent py-8"
+          scrolled
+            ? "bg-white/95 backdrop-blur-xl py-3 border-b border-gray-100 shadow-[0_1px_12px_rgba(0,0,0,0.04)]"
+            : "bg-transparent py-5"
         }`}
       >
-        <div className="w-full px-8 md:px-12 flex items-center justify-between">
+        <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-10 flex items-center justify-between">
 
-          {/* ── Left: Logo ── */}
-          <div className="flex items-center gap-12">
-            <Link href="/" className="group relative flex items-center">
-              <div className={`relative transition-all duration-500 ${scrolled ? "w-32 h-8" : "w-40 h-10"}`}>
-                <Image 
-                  src="/logo.png" 
-                  alt="Proptee" 
-                  fill 
-                  className={`object-contain transition-all duration-500 ${scrolled ? "brightness-100 invert-0" : "brightness-0 invert"}`} 
-                  priority 
+          {/* ── Left: Logo + Nav ── */}
+          <div className="flex items-center gap-8 lg:gap-12">
+            <Link href="/" className="shrink-0">
+              <div className={`relative transition-all duration-500 ${scrolled ? "w-28 h-7 lg:w-32 lg:h-8" : "w-32 h-8 lg:w-36 lg:h-9"}`}>
+                <Image
+                  src="/logo.png"
+                  alt="Proptee"
+                  fill
+                  className={`object-contain transition-all duration-500 ${scrolled ? "" : "brightness-0 invert"}`}
+                  priority
                 />
               </div>
             </Link>
 
-            {/* Navigation Links — Subtle Minimalist */}
-            <nav className="hidden xl:flex items-center gap-10">
+            {/* Nav Links */}
+            <nav className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`text-[11px] font-black uppercase tracking-[0.3em] transition-all duration-500 relative group overflow-hidden ${
-                    scrolled ? "text-brand-dark/60 hover:text-brand-emerald" : "text-white/60 hover:text-white"
+                  className={`px-4 py-2 rounded-lg text-[15px] font-medium transition-colors ${
+                    scrolled
+                      ? "text-gray-600 hover:text-brand-dark hover:bg-gray-50"
+                      : "text-white/70 hover:text-white hover:bg-white/10"
                   }`}
                 >
-                  <span className="relative z-10">{link.label}</span>
-                  <span className="absolute bottom-0 left-0 w-full h-[1px] bg-brand-emerald -translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
+                  {link.label}
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* ── Right: Integrated Actions ── */}
-          <div className="flex items-center gap-4 md:gap-8">
-            
-            <div className="hidden lg:flex items-center gap-6">
-               <button className={`p-2 rounded-full transition-colors ${scrolled ? "text-brand-dark hover:bg-gray-100" : "text-white hover:bg-white/10"}`}>
-                 <Globe size={16} strokeWidth={1.5} />
-               </button>
+          {/* ── Right: Actions ── */}
+          <div className="flex items-center gap-2 lg:gap-3">
 
-               {user ? (
-                 <div className="relative">
-                   <button 
-                     onClick={() => setDropdownOpen(!dropdownOpen)}
-                     className={`flex items-center gap-3 px-4 py-2 rounded-full transition-all group ${
-                       scrolled ? "bg-gray-50 text-brand-dark border border-gray-100" : "bg-white/10 text-white border border-white/10"
-                     }`}
-                   >
-                     <div className="w-6 h-6 rounded-full bg-brand-emerald/10 flex items-center justify-center text-brand-emerald">
-                       <User size={12} />
-                     </div>
-                     <span className="text-[10px] font-black uppercase tracking-widest">{getDisplayName()}</span>
-                     <ChevronDown size={12} className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`} />
-                   </button>
-
-                   <AnimatePresence>
-                    {dropdownOpen && (
-                      <div className="absolute top-full right-0 mt-4 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 overflow-hidden z-[110]">
-                        <button 
-                          onClick={handleSignOut}
-                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 text-red-400 text-[10px] font-black uppercase tracking-widest transition-all"
-                        >
-                          <LogOut size={14} /> Sign Out
-                        </button>
-                      </div>
-                    )}
-                   </AnimatePresence>
-                 </div>
-               ) : (
-                 <div className="flex items-center gap-3">
-                   <Link href="/login" className={`text-[10px] font-black uppercase tracking-widest pl-2 pr-1 ${scrolled ? "text-brand-dark/60 hover:text-brand-emerald" : "text-white/60 hover:text-white"}`}>
-                     Sign In
-                   </Link>
-                   <Link href="/signup" className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
-                     scrolled 
-                       ? "border-brand-dark/10 text-brand-dark hover:bg-brand-dark hover:text-white" 
-                       : "border-white/20 text-white hover:bg-white hover:text-brand-dark"
-                   }`}>
-                     Join Us
-                   </Link>
-                 </div>
-               )}
-            </div>
-
-            <div className="h-4 w-[1px] bg-gray-200/20 hidden md:block" />
-
-            {/* List Property CTA — Cinematic Shape */}
+            {/* List Property CTA */}
             <Link
               href="/list-property"
-              className={`hidden md:flex items-center gap-3 px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 shadow-xl ${
-                scrolled 
-                  ? "bg-brand-emerald text-white shadow-brand-emerald/20 hover:bg-brand-dark" 
-                  : "bg-white text-brand-dark hover:bg-brand-emerald hover:text-white"
+              className={`hidden md:inline-flex items-center px-6 py-2.5 rounded-full text-[15px] font-semibold transition-all ${
+                scrolled
+                  ? "bg-brand-emerald text-white hover:bg-brand-emerald-muted shadow-sm"
+                  : "bg-white text-brand-dark hover:bg-white/90"
               }`}
             >
-              Enroll Asset
+              List Property
             </Link>
 
-            {/* Geometric Menu Toggle */}
+            {/* Globe / Language */}
+            <button
+              className={`hidden lg:flex w-10 h-10 items-center justify-center rounded-full transition-colors ${
+                scrolled ? "text-gray-500 hover:bg-gray-100" : "text-white/70 hover:bg-white/10"
+              }`}
+            >
+              <Globe size={18} />
+            </button>
+
+            {/* Auth Section */}
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setDropdownOpen(!dropdownOpen); }}
+                  className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border transition-all ${
+                    scrolled
+                      ? "border-gray-200 bg-white hover:shadow-md text-brand-dark"
+                      : "border-white/20 bg-white/10 hover:bg-white/15 text-white"
+                  }`}
+                >
+                  <div className="w-8 h-8 rounded-full bg-brand-emerald flex items-center justify-center text-white text-xs font-bold">
+                    {getDisplayName().charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-[15px] font-medium hidden lg:block max-w-[120px] truncate">{getDisplayName()}</span>
+                  <ChevronDown size={14} className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[110] py-1"
+                    >
+                      <div className="px-4 py-3 border-b border-gray-50">
+                        <p className="text-[15px] font-semibold text-brand-dark truncate">{getDisplayName()}</p>
+                        <p className="text-sm text-gray-400 truncate mt-0.5">{user.email}</p>
+                      </div>
+                      <Link
+                        href="/dashboard/agent"
+                        className="flex items-center gap-3 px-4 py-3 text-[15px] text-gray-600 hover:bg-gray-50 transition-colors"
+                      >
+                        <User size={16} className="text-gray-400" />
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-[15px] text-red-500 hover:bg-red-50 transition-colors"
+                      >
+                        <LogOut size={16} />
+                        Sign Out
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/login"
+                  className={`px-4 py-2.5 rounded-full text-[15px] font-medium transition-colors ${
+                    scrolled ? "text-gray-600 hover:text-brand-dark hover:bg-gray-50" : "text-white/80 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  className={`px-5 py-2.5 rounded-full text-[15px] font-semibold border transition-all ${
+                    scrolled
+                      ? "border-gray-200 text-brand-dark hover:bg-brand-dark hover:text-white hover:border-brand-dark"
+                      : "border-white/30 text-white hover:bg-white hover:text-brand-dark"
+                  }`}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+
+            {/* Menu Toggle */}
             <button
               onClick={() => setIsNavOpen(true)}
-              className={`flex items-center gap-3 pl-4 border-l border-gray-200/20 group transition-all`}
+              className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all ml-1 ${
+                scrolled
+                  ? "border-gray-200 text-brand-dark hover:bg-gray-50 hover:border-gray-300"
+                  : "border-white/20 text-white hover:bg-white/10"
+              }`}
             >
-              <div className="hidden sm:block text-right">
-                <p className={`text-[9px] font-black tracking-widest uppercase mb-0.5 ${scrolled ? "text-brand-dark" : "text-white"}`}>Navigate</p>
-                <div className={`h-[1px] w-full origin-right scale-x-50 group-hover:scale-x-100 transition-transform duration-500 ${scrolled ? "bg-brand-emerald" : "bg-white"}`} />
-              </div>
-              <div className={`w-12 h-12 flex items-center justify-center rounded-2xl border transition-all duration-500 ${
-                scrolled 
-                  ? "border-gray-200 text-brand-dark hover:border-brand-emerald hover:text-brand-emerald" 
-                  : "border-white/10 text-white hover:border-white"
-              }`}>
-                <Menu size={20} className="group-hover:rotate-180 transition-transform duration-700" />
-              </div>
+              <Menu size={18} />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Floating Menu Button (Appears when Main Header hides) */}
-      <div 
-        className={`fixed top-6 right-6 md:right-12 z-[105] transition-all duration-500 flex items-center justify-center ${
-          isHidden ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"
-        }`}
-      >
-        {/* Soft Aura Glow */}
-        <div className="absolute inset-0 bg-white/40 blur-2xl rounded-[2rem] scale-150" />
-        
-        <button
-          onClick={() => setIsNavOpen(true)}
-          className="relative w-14 h-14 flex items-center justify-center bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] border border-gray-100/50 hover:border-gray-200 hover:scale-105 group transition-all duration-500 ease-out"
-        >
-          {/* Custom three-line menu icon matching design */}
-          <div className="flex flex-col gap-[5px] w-[22px] justify-center items-center">
-             <div className="w-full h-[2px] bg-gray-800 rounded-full group-hover:bg-brand-emerald transition-colors duration-300" />
-             <div className="w-full h-[2px] bg-gray-800 rounded-full group-hover:bg-brand-emerald transition-colors duration-300" />
-             <div className="w-full h-[2px] bg-gray-800 rounded-full group-hover:bg-brand-emerald transition-colors duration-300" />
-          </div>
-        </button>
-      </div>
+      {/* Floating Menu Button — appears when header hides on scroll (desktop only) */}
+      <AnimatePresence>
+        {isHidden && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            onClick={() => setIsNavOpen(true)}
+            className="fixed top-5 right-6 lg:right-10 z-[105] hidden md:flex w-12 h-12 items-center justify-center bg-white rounded-full shadow-lg shadow-black/8 border border-gray-100 hover:shadow-xl hover:scale-105 transition-all"
+          >
+            <Menu size={18} className="text-brand-dark" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <FullNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
     </>
