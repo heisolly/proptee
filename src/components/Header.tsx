@@ -203,6 +203,20 @@ export default function Header() {
         </div>
       </header>
 
+      {/* Floating Menu Button (Appears when Main Header hides) */}
+      <div 
+        className={`fixed top-6 right-6 md:right-12 z-[105] transition-all duration-500 ${
+          isHidden ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"
+        }`}
+      >
+        <button
+          onClick={() => setIsNavOpen(true)}
+          className="w-12 h-12 flex items-center justify-center rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-[20px] text-brand-dark shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_40px_rgba(31,122,92,0.2)] hover:border-brand-emerald hover:text-brand-emerald group transition-all"
+        >
+          <Menu size={20} className="group-hover:rotate-180 transition-transform duration-700" />
+        </button>
+      </div>
+
       <FullNav isOpen={isNavOpen} onClose={() => setIsNavOpen(false)} />
     </>
   );
