@@ -3,19 +3,46 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, Globe, User } from "lucide-react";
+import { Menu, X, Globe, User, LogOut, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import FullNav from "./Sidebar";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Initial session check
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+    checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   const navLinks = [
     { label: "Properties", href: "/properties" },
@@ -24,6 +51,11 @@ export default function Header() {
     { label: "Affiliate", href: "/affiliate" },
     { label: "Blog", href: "/blog" },
   ];
+
+  const getDisplayName = () => {
+    if (!user) return "";
+    return user.user_metadata?.display_username || user.user_metadata?.full_name || "Member";
+  };
 
   return (
     <>
@@ -39,8 +71,14 @@ export default function Header() {
           {/* ── Left: Logo ── */}
           <div className="flex items-center gap-12">
             <Link href="/" className="group relative flex items-center">
-              <div className={`relative w-32 h-8 transition-all duration-500 ${scrolled ? "brightness-100 invert-0" : "brightness-0 invert h-10 w-40"}`}>
-                <Image src="/logo.png" alt="Proptee" fill className="object-contain" priority />
+              <div className={`relative transition-all duration-500 ${scrolled ? "w-32 h-8" : "w-40 h-10"}`}>
+                <Image 
+                  src="/logo.png" 
+                  alt="Proptee" 
+                  fill 
+                  className={`object-contain transition-all duration-500 ${scrolled ? "brightness-100 invert-0" : "brightness-0 invert"}`} 
+                  priority 
+                />
               </div>
             </Link>
 
@@ -68,18 +106,49 @@ export default function Header() {
                <button className={`p-2 rounded-full transition-colors ${scrolled ? "text-brand-dark hover:bg-gray-100" : "text-white hover:bg-white/10"}`}>
                  <Globe size={16} strokeWidth={1.5} />
                </button>
-               <div className="flex items-center gap-3">
-                 <Link href="/login" className={`text-[10px] font-black uppercase tracking-widest pl-2 pr-1 ${scrolled ? "text-brand-dark/60 hover:text-brand-emerald" : "text-white/60 hover:text-white"}`}>
-                   Sign In
-                 </Link>
-                 <Link href="/signup" className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
-                   scrolled 
-                     ? "border-brand-dark/10 text-brand-dark hover:bg-brand-dark hover:text-white" 
-                     : "border-white/20 text-white hover:bg-white hover:text-brand-dark"
-                 }`}>
-                   Join Us
-                 </Link>
-               </div>
+
+               {user ? (
+                 <div className="relative">
+                   <button 
+                     onClick={() => setDropdownOpen(!dropdownOpen)}
+                     className={`flex items-center gap-3 px-4 py-2 rounded-full transition-all group ${
+                       scrolled ? "bg-gray-50 text-brand-dark border border-gray-100" : "bg-white/10 text-white border border-white/10"
+                     }`}
+                   >
+                     <div className="w-6 h-6 rounded-full bg-brand-emerald/10 flex items-center justify-center text-brand-emerald">
+                       <User size={12} />
+                     </div>
+                     <span className="text-[10px] font-black uppercase tracking-widest">{getDisplayName()}</span>
+                     <ChevronDown size={12} className={`transition-transform duration-300 ${dropdownOpen ? "rotate-180" : ""}`} />
+                   </button>
+
+                   <AnimatePresence>
+                    {dropdownOpen && (
+                      <div className="absolute top-full right-0 mt-4 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 overflow-hidden z-[110]">
+                        <button 
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 text-red-400 text-[10px] font-black uppercase tracking-widest transition-all"
+                        >
+                          <LogOut size={14} /> Sign Out
+                        </button>
+                      </div>
+                    )}
+                   </AnimatePresence>
+                 </div>
+               ) : (
+                 <div className="flex items-center gap-3">
+                   <Link href="/login" className={`text-[10px] font-black uppercase tracking-widest pl-2 pr-1 ${scrolled ? "text-brand-dark/60 hover:text-brand-emerald" : "text-white/60 hover:text-white"}`}>
+                     Sign In
+                   </Link>
+                   <Link href="/signup" className={`px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
+                     scrolled 
+                       ? "border-brand-dark/10 text-brand-dark hover:bg-brand-dark hover:text-white" 
+                       : "border-white/20 text-white hover:bg-white hover:text-brand-dark"
+                   }`}>
+                     Join Us
+                   </Link>
+                 </div>
+               )}
             </div>
 
             <div className="h-4 w-[1px] bg-gray-200/20 hidden md:block" />
@@ -93,7 +162,7 @@ export default function Header() {
                   : "bg-white text-brand-dark hover:bg-brand-emerald hover:text-white"
               }`}
             >
-              List Property
+              Enroll Asset
             </Link>
 
             {/* Geometric Menu Toggle */}
@@ -113,20 +182,7 @@ export default function Header() {
                 <Menu size={20} className="group-hover:rotate-180 transition-transform duration-700" />
               </div>
             </button>
-
-            {/* Mobile Nav Toggle */}
-            <button
-              className="lg:hidden p-2 text-white"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X size={24} /> : null}
-            </button>
           </div>
-        </div>
-
-        {/* Mobile Navigation Drawer Overlay */}
-        <div className={`fixed inset-0 bg-brand-dark z-[110] transition-all duration-700 h-screen ${mobileOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"} pointer-events-none lg:hidden`}>
-           {/* Mobile contents handled by FullNav for consistency */}
         </div>
       </header>
 
