@@ -205,15 +205,23 @@ export default function Header() {
 
       {/* Floating Menu Button (Appears when Main Header hides) */}
       <div 
-        className={`fixed top-6 right-6 md:right-12 z-[105] transition-all duration-500 ${
+        className={`fixed top-6 right-6 md:right-12 z-[105] transition-all duration-500 flex items-center justify-center ${
           isHidden ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-10 pointer-events-none"
         }`}
       >
+        {/* Soft Aura Glow */}
+        <div className="absolute inset-0 bg-white/40 blur-2xl rounded-[2rem] scale-150" />
+        
         <button
           onClick={() => setIsNavOpen(true)}
-          className="w-12 h-12 flex items-center justify-center rounded-2xl border border-gray-200 bg-white/90 backdrop-blur-[20px] text-brand-dark shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_40px_rgba(31,122,92,0.2)] hover:border-brand-emerald hover:text-brand-emerald group transition-all"
+          className="relative w-14 h-14 flex items-center justify-center bg-white rounded-[1.25rem] shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.1)] border border-gray-100/50 hover:border-gray-200 hover:scale-105 group transition-all duration-500 ease-out"
         >
-          <Menu size={20} className="group-hover:rotate-180 transition-transform duration-700" />
+          {/* Custom three-line menu icon matching design */}
+          <div className="flex flex-col gap-[5px] w-[22px] justify-center items-center">
+             <div className="w-full h-[2px] bg-gray-800 rounded-full group-hover:bg-brand-emerald transition-colors duration-300" />
+             <div className="w-full h-[2px] bg-gray-800 rounded-full group-hover:bg-brand-emerald transition-colors duration-300" />
+             <div className="w-full h-[2px] bg-gray-800 rounded-full group-hover:bg-brand-emerald transition-colors duration-300" />
+          </div>
         </button>
       </div>
 
