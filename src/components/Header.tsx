@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, ChevronDown, Globe, LogOut, LayoutDashboard, User, Search } from "lucide-react";
+import { Menu, X, ChevronDown, Globe, LogOut, LayoutDashboard, User, Search, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import FullNav from "./Sidebar";
 import { supabase } from "@/lib/supabase";
@@ -52,19 +52,6 @@ export default function Header() {
     };
   }, [lastScrollY]);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    const close = () => setDropdownOpen(false);
-    document.addEventListener("click", close);
-    return () => document.removeEventListener("click", close);
-  }, [dropdownOpen]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-  };
-
   const navLinks = [
     { label: "Properties", href: "/properties" },
     { label: "Locations", href: "/locations" },
@@ -78,185 +65,190 @@ export default function Header() {
     return user.user_metadata?.display_username || user.user_metadata?.full_name || "Member";
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  };
+
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 w-full hidden md:block ${
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 w-full ${
           isHidden ? "-translate-y-full" : "translate-y-0"
         } ${
           scrolled
-            ? "bg-white/95 backdrop-blur-xl py-3 border-b border-gray-100 shadow-[0_1px_12px_rgba(0,0,0,0.04)]"
-            : "bg-transparent py-5"
+            ? "bg-white/80 backdrop-blur-2xl py-3 border-b border-gray-100 shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
+            : "bg-transparent py-6"
         }`}
       >
-        <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-10 flex items-center justify-between">
+        <div className="w-full max-w-[1440px] mx-auto px-6 lg:px-12 flex items-center justify-between">
 
-          {/* ── Left: Logo + Nav ── */}
-          <div className="flex items-center gap-8 lg:gap-12">
-            <Link href="/" className="shrink-0">
-              <div className={`relative transition-all duration-500 ${scrolled ? "w-28 h-7 lg:w-32 lg:h-8" : "w-32 h-8 lg:w-36 lg:h-9"}`}>
+          {/* ── Branding ── */}
+          <div className="flex items-center gap-12 lg:gap-16">
+            <Link href="/" className="shrink-0 group">
+              <div className={`relative transition-all duration-700 ${scrolled ? "w-28 h-7 lg:w-32 lg:h-8" : "w-32 h-8 lg:w-40 lg:h-10"}`}>
                 <Image
                   src="/logo.png"
                   alt="Proptee"
                   fill
-                  className={`object-contain transition-all duration-500 ${scrolled ? "" : "brightness-0 invert"}`}
+                  className={`object-contain transition-all duration-700 group-hover:scale-105 ${scrolled ? "" : "brightness-0 invert"}`}
                   priority
                 />
               </div>
             </Link>
 
-            {/* Nav Links */}
-            <nav className="hidden lg:flex items-center gap-1">
+            {/* Navigation (Desktop) */}
+            <nav className="hidden lg:flex items-center gap-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`px-4 py-2 rounded-lg text-[15px] font-medium transition-colors ${
+                  className={`relative px-4 py-2 text-[14px] font-bold uppercase tracking-[0.15em] transition-all group ${
                     scrolled
-                      ? "text-gray-600 hover:text-brand-dark hover:bg-gray-50"
-                      : "text-white/70 hover:text-white hover:bg-white/10"
+                      ? "text-gray-500 hover:text-brand-dark"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
                   {link.label}
+                  <span className={`absolute bottom-0 left-4 right-4 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ${scrolled ? "bg-brand-emerald" : "bg-white"}`} />
                 </Link>
               ))}
             </nav>
           </div>
 
-          {/* ── Right: Actions ── */}
-          <div className="flex items-center gap-2 lg:gap-3">
+          {/* ── Action Suite ── */}
+          <div className="flex items-center gap-3 lg:gap-6">
 
-            {/* List Property CTA */}
+            {/* Premium CTA */}
             <Link
               href="/list-property"
-              className={`hidden md:inline-flex items-center px-6 py-2.5 rounded-full text-[15px] font-semibold transition-all ${
+              className={`hidden md:flex items-center gap-2 px-8 py-3 rounded-full text-[13px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 ${
                 scrolled
-                  ? "bg-brand-emerald text-white hover:bg-brand-emerald-muted shadow-sm"
-                  : "bg-white text-brand-dark hover:bg-white/90"
+                  ? "bg-brand-emerald text-white shadow-lg shadow-brand-emerald/20 hover:bg-brand-dark"
+                  : "bg-white text-brand-dark hover:bg-brand-emerald hover:text-white shadow-xl shadow-black/10"
               }`}
             >
+              <Plus size={16} strokeWidth={3} />
               List Property
             </Link>
 
-            {/* Search Trigger */}
-            <button
-              onClick={openSearch}
-              className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
-                scrolled ? "text-gray-500 hover:bg-gray-100" : "text-white/70 hover:bg-white/10"
-              }`}
-            >
-              <Search size={18} />
-            </button>
+            {/* Interaction Group */}
+            <div className="flex items-center gap-1 lg:gap-2">
+              <button
+                onClick={openSearch}
+                className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
+                  scrolled ? "text-gray-400 hover:bg-gray-100 hover:text-brand-dark" : "text-white/60 hover:bg-white/20 hover:text-white"
+                }`}
+              >
+                <Search size={22} strokeWidth={2.5} />
+              </button>
 
-            {/* Globe / Language */}
-            <button
-              className={`hidden lg:flex w-10 h-10 items-center justify-center rounded-full transition-colors ${
-                scrolled ? "text-gray-500 hover:bg-gray-100" : "text-white/70 hover:bg-white/10"
-              }`}
-            >
-              <Globe size={18} />
-            </button>
+              {user ? (
+                <div className="relative ml-1 lg:ml-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setDropdownOpen(!dropdownOpen); }}
+                    className={`flex items-center gap-3 pl-2 pr-4 py-1.5 rounded-full border transition-all ${
+                      scrolled
+                        ? "border-gray-100 bg-gray-50/50 hover:bg-white text-brand-dark"
+                        : "border-white/20 bg-white/10 hover:bg-white/20 text-white"
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-brand-emerald flex items-center justify-center text-white text-[11px] font-black shadow-lg">
+                      {getDisplayName().charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-[14px] font-bold hidden lg:block tracking-tight">{getDisplayName()}</span>
+                    <ChevronDown size={14} className={`transition-transform duration-300 opacity-40 ${dropdownOpen ? "rotate-180" : ""}`} />
+                  </button>
 
-            {/* Auth Section */}
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setDropdownOpen(!dropdownOpen); }}
-                  className={`flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full border transition-all ${
-                    scrolled
-                      ? "border-gray-200 bg-white hover:shadow-md text-brand-dark"
-                      : "border-white/20 bg-white/10 hover:bg-white/15 text-white"
-                  }`}
-                >
-                  <div className="w-8 h-8 rounded-full bg-brand-emerald flex items-center justify-center text-white text-xs font-bold">
-                    {getDisplayName().charAt(0).toUpperCase()}
-                  </div>
-                  <span className="text-[15px] font-medium hidden lg:block max-w-[120px] truncate">{getDisplayName()}</span>
-                  <ChevronDown size={14} className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
-                </button>
-
-                <AnimatePresence>
-                  {dropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 6, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full right-0 mt-2 w-52 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-[110] py-1"
-                    >
-                      <div className="px-4 py-3 border-b border-gray-50">
-                        <p className="text-[15px] font-semibold text-brand-dark truncate">{getDisplayName()}</p>
-                        <p className="text-sm text-gray-400 truncate mt-0.5">{user.email}</p>
-                      </div>
-                      <Link
-                        href="/dashboard/agent"
-                        className="flex items-center gap-3 px-4 py-3 text-[15px] text-gray-600 hover:bg-gray-50 transition-colors"
+                  <AnimatePresence>
+                    {dropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute top-full right-0 mt-3 w-64 bg-white rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] border border-gray-50 overflow-hidden z-[110] p-2"
                       >
-                        <User size={16} className="text-gray-400" />
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={handleSignOut}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-[15px] text-red-500 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut size={16} />
-                        Sign Out
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1">
-                <Link
-                  href="/login"
-                  className={`px-4 py-2.5 rounded-full text-[15px] font-medium transition-colors ${
-                    scrolled ? "text-gray-600 hover:text-brand-dark hover:bg-gray-50" : "text-white/80 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/signup"
-                  className={`px-5 py-2.5 rounded-full text-[15px] font-semibold border transition-all ${
-                    scrolled
-                      ? "border-gray-200 text-brand-dark hover:bg-brand-dark hover:text-white hover:border-brand-dark"
-                      : "border-white/30 text-white hover:bg-white hover:text-brand-dark"
-                  }`}
-                >
-                  Sign Up
-                </Link>
-              </div>
-            )}
+                        <div className="px-5 py-4 border-b border-gray-50">
+                          <p className="text-[15px] font-bold text-brand-dark">{getDisplayName()}</p>
+                          <p className="text-[12px] text-gray-400 font-medium truncate mt-0.5">{user.email}</p>
+                        </div>
+                        <div className="p-1 space-y-1">
+                          <Link
+                            href="/dashboard/agent"
+                            className="flex items-center gap-3 px-4 py-3.5 text-[14px] font-bold text-gray-600 hover:bg-gray-50 hover:text-brand-dark rounded-2xl transition-all"
+                          >
+                            <LayoutDashboard size={18} className="text-gray-300" />
+                            Elite Dashboard
+                          </Link>
+                          <button
+                            onClick={handleSignOut}
+                            className="w-full flex items-center gap-3 px-4 py-3.5 text-[14px] font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                          >
+                            <LogOut size={18} />
+                            End Session
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="hidden lg:flex items-center ml-2">
+                  <Link
+                    href="/login"
+                    className={`px-5 py-2.5 rounded-full text-[14px] font-bold uppercase tracking-widest transition-all ${
+                      scrolled 
+                        ? "text-gray-600 hover:text-brand-dark hover:bg-gray-100" 
+                        : "text-white/70 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    Private Access
+                  </Link>
+                </div>
+              )}
+            </div>
 
-            {/* Menu Toggle */}
-            <button
-              onClick={() => setIsNavOpen(true)}
-              className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all ml-1 ${
-                scrolled
-                  ? "border-gray-200 text-brand-dark hover:bg-gray-50 hover:border-gray-300"
-                  : "border-white/20 text-white hover:bg-white/10"
-              }`}
-            >
-              <Menu size={18} />
-            </button>
+            {/* Menu Button */}
+            <div className="flex items-center gap-2 lg:gap-4">
+              <div className={`hidden md:block w-[1px] h-6 ${scrolled ? "bg-gray-100" : "bg-white/10"}`} />
+              <button
+                onClick={() => setIsNavOpen(true)}
+                className={`w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl lg:rounded-2xl transition-all shadow-xl ${
+                  scrolled
+                    ? "bg-brand-dark text-white hover:bg-brand-emerald"
+                    : "bg-brand-emerald text-white hover:bg-white hover:text-brand-dark shadow-brand-emerald/20"
+                }`}
+              >
+                <div className="space-y-1.5 flex flex-col items-center">
+                   <div className="w-5 h-[2px] bg-current rounded-full" />
+                   <div className="w-5 h-[2px] bg-current rounded-full" />
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Floating Menu Button — appears when header hides on scroll (desktop only) */}
+      {/* Floating Header Hub (Mobile Mini) */}
       <AnimatePresence>
         {isHidden && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            onClick={() => setIsNavOpen(true)}
-            className="fixed top-5 right-6 lg:right-10 z-[105] hidden md:flex w-12 h-12 items-center justify-center bg-white rounded-full shadow-lg shadow-black/8 border border-gray-100 hover:shadow-xl hover:scale-105 transition-all"
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-[105] md:hidden"
           >
-            <Menu size={18} className="text-brand-dark" />
-          </motion.button>
+             <button
+               onClick={() => setIsNavOpen(true)}
+               className="bg-brand-dark text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 font-black text-xs uppercase tracking-widest"
+             >
+                <div className="flex flex-col gap-1">
+                   <div className="w-4 h-[1.5px] bg-white" />
+                   <div className="w-3 h-[1.5px] bg-white" />
+                </div>
+                Menu
+             </button>
+          </motion.div>
         )}
       </AnimatePresence>
 

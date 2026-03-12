@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display, Dancing_Script } from "next/font/google";
+import { Inter, Playfair_Display, Satisfy } from "next/font/google";
 import "@/styles/globals.css";
-import BottomNav from "@/components/BottomNav";
 import { SearchProvider } from "@/context/SearchContext";
 import SearchModal from "@/components/SearchModal";
 
@@ -17,10 +16,13 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
-const dancing = Dancing_Script({
+
+
+const handwriting = Satisfy({
   subsets: ["latin"],
   variable: "--font-handwriting",
   display: "swap",
+  weight: "400",
 });
 
 export const viewport: Viewport = {
@@ -46,10 +48,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${playfair.variable} ${dancing.variable} font-sans bg-brand-bg text-brand-dark antialiased`}>
+      <body className={`${inter.variable} ${playfair.variable} ${handwriting.variable} font-sans bg-brand-bg text-brand-dark antialiased`}>
         <SearchProvider>
           {children}
-          <BottomNav />
           <SearchModal />
         </SearchProvider>
       </body>

@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { BedDouble, Bath, Maximize2 } from "lucide-react";
+import { BedDouble, Bath, Maximize2, ArrowRight, MapPin } from "lucide-react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 
@@ -31,64 +31,95 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
   const displayProperties = properties.length > 0 ? properties : fallback;
 
   return (
-    <section className="py-16 md:py-24 bg-brand-bg">
-      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto">
+    <section className="py-16 md:py-32 bg-brand-bg overflow-hidden">
+      <div className="px-5 md:px-8 lg:max-w-[1440px] lg:mx-auto">
+        <div className="flex items-end justify-between mb-12 md:mb-16">
+          <div className="space-y-3">
+            <span className="text-brand-emerald text-xs font-black uppercase tracking-[0.4em]">Curated Inventory</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif text-brand-dark tracking-tighter">Popular Properties</h2>
+          </div>
+          
+          <Link 
+            href="/properties" 
+            className="hidden md:flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-brand-dark hover:text-brand-emerald transition-colors"
+          >
+            Explore All 
+            <div className="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center">
+              <ArrowRight size={18} />
+            </div>
+          </Link>
+        </div>
 
-        <h2 className="text-3xl md:text-4xl font-serif text-brand-dark mb-8 md:mb-12 tracking-tight">Popular Properties</h2>
-
-        {/* Horizontal scroll on mobile, grid on desktop */}
-        <div className="-mx-5 px-5 md:mx-0 md:px-0">
-          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
+        {/* Horizontal scroll on all devices */}
+        <div className="relative">
+          <div className="flex gap-6 overflow-x-auto pb-12 snap-x snap-mandatory scrollbar-hide -mx-5 px-5 md:mx-0 md:px-0">
             {displayProperties.map((prop, i) => (
               <motion.div
                 key={prop.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: (i % 3) * 0.08 }}
-                className="card-base overflow-hidden group snap-start min-w-[280px] w-[85vw] md:w-auto md:min-w-0 flex-shrink-0 md:flex-shrink-initial"
+                transition={{ duration: 0.6, delay: i * 0.05 }}
+                className="snap-start min-w-[300px] w-[85vw] md:w-[400px] lg:w-[480px] flex-shrink-0"
               >
-                {/* Image */}
-                <Link href={`/properties/${prop.id}`} className="block relative aspect-[4/3] overflow-hidden min-h-0">
-                  <Image
-                    src={prop.images?.[0] || "/hero_background.jpg"}
-                    alt={prop.title}
-                    fill
-                    sizes="(max-width: 768px) 85vw, (max-width: 1024px) 45vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {/* Type Badge */}
-                  <div className="absolute top-3 left-3 bg-brand-emerald text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg">
-                    {prop.listing_type || "For Sale"}
-                  </div>
-                </Link>
-
-                {/* Info */}
-                <div className="p-4 md:p-5">
-                  <p className="text-brand-emerald text-xl md:text-2xl font-semibold font-sans mb-1">
-                    {formatPrice(prop.price)}
-                    <span className="text-brand-muted text-sm font-normal"> {prop.listing_type === "For Rent" ? "/mo" : ""}</span>
-                  </p>
-                  <Link href={`/properties/${prop.id}`}>
-                    <h3 className="text-brand-dark text-lg font-sans font-semibold mb-1 hover:text-brand-emerald transition-colors line-clamp-1">
-                      {prop.title}
-                    </h3>
+                <div className="card-base group overflow-hidden border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white rounded-[2rem]">
+                  {/* Image */}
+                  <Link href={`/properties/${prop.id}`} className="block relative aspect-[5/4] overflow-hidden">
+                    <Image
+                      src={prop.images?.[0] || "/hero_background.jpg"}
+                      alt={prop.title}
+                      fill
+                      sizes="(max-width: 768px) 85vw, 480px"
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    {/* Type Badge */}
+                    <div className="absolute top-5 left-5 bg-white/95 backdrop-blur-sm text-brand-dark text-[10px] font-black uppercase tracking-widest px-4 py-2.5 rounded-xl shadow-sm">
+                      {prop.listing_type || "For Sale"}
+                    </div>
                   </Link>
-                  <p className="text-brand-muted text-sm font-sans mb-4 line-clamp-1">{prop.address}</p>
 
-                  {/* Specs */}
-                  <div className="border-t border-[#e2e8f0] pt-3 flex items-center gap-4 md:gap-6">
-                    <div className="flex items-center gap-1.5 text-brand-dark-muted">
-                      <BedDouble size={16} className="text-brand-emerald" />
-                      <span className="text-sm font-medium">{prop.beds}</span>
+                  {/* Info */}
+                  <div className="p-6 md:p-8">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-brand-dark text-xl md:text-2xl font-serif font-bold mb-1 hover:text-brand-emerald transition-colors line-clamp-1">
+                          {prop.title}
+                        </h3>
+                        <p className="text-brand-muted text-[13px] font-medium flex items-center gap-2">
+                          <MapPin size={14} className="text-brand-emerald" />
+                          {prop.address}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-brand-emerald text-xl md:text-2xl font-bold">
+                          {formatPrice(prop.price)}
+                        </p>
+                        <p className="text-[10px] text-brand-muted font-black uppercase tracking-widest">
+                          {prop.listing_type === "For Rent" ? "Per Month" : "Asking Price"}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-brand-dark-muted">
-                      <Bath size={16} className="text-brand-emerald" />
-                      <span className="text-sm font-medium">{prop.baths}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-brand-dark-muted">
-                      <Maximize2 size={16} className="text-brand-emerald" />
-                      <span className="text-sm font-medium">{prop.sqft} m²</span>
+
+                    {/* Specs */}
+                    <div className="pt-6 border-t border-gray-50 flex items-center justify-between">
+                      <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 text-brand-dark">
+                          <BedDouble size={18} className="text-brand-emerald opacity-60" />
+                          <span className="text-sm font-bold">{prop.beds}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-brand-dark">
+                          <Bath size={18} className="text-brand-emerald opacity-60" />
+                          <span className="text-sm font-bold">{prop.baths}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-brand-dark">
+                          <Maximize2 size={18} className="text-brand-emerald opacity-60" />
+                          <span className="text-sm font-bold">{prop.sqft}</span>
+                        </div>
+                      </div>
+                      
+                      <Link href={`/properties/${prop.id}`} className="w-10 h-10 rounded-full bg-brand-bg flex items-center justify-center group-hover:bg-brand-emerald group-hover:text-white transition-all">
+                        <ArrowRight size={18} />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -97,16 +128,16 @@ export default function FeaturedCarousel({ properties = [] }: { properties: any[
           </div>
         </div>
 
-        {/* View All */}
-        <div className="text-center mt-10 md:mt-16">
+        {/* Mobile View All */}
+        <div className="mt-8 md:hidden">
           <Link
             href="/properties"
-            className="luxury-button"
+            className="w-full flex items-center justify-center gap-3 py-4 bg-white border border-gray-100 rounded-2xl text-[13px] font-bold uppercase tracking-widest text-brand-dark"
           >
-            View All Properties
+            Explore All Inventory
+            <ArrowRight size={16} />
           </Link>
         </div>
-
       </div>
     </section>
   );

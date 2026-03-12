@@ -3,103 +3,174 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, Linkedin, Youtube, Facebook, MapPin, Phone, Mail } from "lucide-react";
+import { Instagram, Linkedin, Youtube, Facebook, Mail, ArrowRight, ArrowUpRight, Globe, ShieldCheck, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
 
-const links = {
-  Properties: ["Houses", "Apartments", "Villas", "Penthouses"],
-  Company: ["How We Work", "Pricing", "About Us", "Security"],
-  Resources: ["Blog", "Agents", "FAQ", "Investment Guide"],
-  Help: ["Privacy Policy", "Terms of Use", "Contact", "Support"],
-};
+const footerLinks = [
+  {
+    title: "Portfolio",
+    links: [
+      { label: "Elite Mansions", href: "/properties?type=house" },
+      { label: "Modern Suites", href: "/properties?type=apartment" },
+      { label: "Waterfront Villas", href: "/properties?type=villa" },
+      { label: "Landed Assets", href: "/properties?type=land" },
+    ]
+  },
+  {
+    title: "Enterprise",
+    links: [
+      { label: "Our Legacy", href: "/about" },
+      { label: "Property Insights", href: "/blog" },
+      { label: "Member Access", href: "/login" },
+      { label: "Affiliate Portal", href: "/affiliate" },
+    ]
+  }
+];
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-dark">
-      {/* Main Footer */}
-      <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto py-14 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 md:gap-12">
-
-          {/* Logo + About + Contact */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="mb-6 block">
-              <div className="relative w-32 h-9 md:w-36 md:h-10">
-                <Image src="/logo.png" alt="Proptee" fill className="object-contain brightness-0 invert" />
+    <footer className="bg-[#0A0B10] text-white pt-24 pb-12 overflow-hidden border-t border-white/5">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-10 lg:px-16">
+        
+        {/* ── Top Section: Brand + Navigation ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24 mb-24">
+          
+          {/* Brand & Statement (4 Cols) */}
+          <div className="lg:col-span-4 space-y-10">
+            <Link href="/" className="inline-block transition-transform hover:scale-105">
+              <div className="relative w-44 h-11">
+                <Image src="/logo.png" alt="Proptee" fill className="object-contain brightness-0 invert" priority />
               </div>
             </Link>
-            <p className="text-white/50 text-sm font-sans leading-relaxed max-w-xs mb-6 md:mb-8">
-              Nigeria's most trusted premium real estate platform. Connecting verified buyers, sellers, and agents since 2010.
-            </p>
+            
+            <h3 className="text-3xl lg:text-4xl font-serif leading-[1.2] max-w-sm tracking-tight">
+               Crafting the future of <br /> 
+               <span className="text-brand-emerald font-handwriting italic normal-case text-4xl lg:text-5xl">Luxury Living</span> <br /> 
+               in West Africa.
+            </h3>
 
-            <div className="space-y-4 mb-8 text-white/50 text-sm font-sans">
-              <p className="flex items-start gap-3">
-                <MapPin className="shrink-0 w-4 h-4 mt-1 text-brand-emerald" />
-                <span>31, Atofarati Qtrs, Abatiti, Adegbayi,<br/>Ibadan, Oyo State.</span>
-              </p>
-              <p className="flex items-start gap-3">
-                <Phone className="shrink-0 w-4 h-4 mt-1 text-brand-emerald" />
-                <span>+234 707 381 7578 <br/> +234 703 864 9165</span>
-              </p>
-              <p className="flex items-center gap-3">
-                <Mail className="shrink-0 w-4 h-4 text-brand-emerald" />
-                <span>info@proptee.ng</span>
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <a href="http://www.instagram.com/propteeng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <Instagram size={16} />
-              </a>
-              <a href="http://www.pinterest.com/propteeng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12 0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.406.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.688 0 1.029-.653 2.568-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345l-.288 1.178c-.046.19-.152.232-.35.139-1.312-.612-2.131-2.536-2.131-4.08 0-3.324 2.415-6.381 6.973-6.381 3.65 0 6.49 2.601 6.49 6.071 0 3.629-2.285 6.549-5.457 6.549-1.066 0-2.068-.554-2.411-1.209l-.657 2.503c-.237.91-.878 2.046-1.312 2.743 1.025.312 2.108.48 3.235.48 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
-              </a>
-              <a href="http://www.youtube.com/@PROPTEEng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <Youtube size={16} />
-              </a>
-              <a href="http://www.x.com/propteeng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <svg width="15" height="15" viewBox="0 0 1200 1227" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
-                </svg>
-              </a>
-              <a href="http://www.tiktok.com/@propteeng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.95v7.4c-.01 2.98-1.73 5.47-4.65 6.68-2.88 1.18-6.08.46-8.26-1.77C1.52 18.16.82 15.02 1.7 11.98c.87-3.03 3.6-5.18 6.68-5.32v4.07c-1.17.07-2.31.78-2.88 1.83-.58 1.05-.51 2.37.15 3.37.66 1 1.83 1.59 3.03 1.56 1.48-.03 2.74-1.2 2.82-2.65V.02z"/></svg>
-              </a>
-              <a href="http://www.facebook.com/PROPTEEng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <Facebook size={16} />
-              </a>
-              <a href="http://www.linkedin.com/company/PROPTEEng" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-brand-emerald hover:bg-brand-emerald transition-all">
-                <Linkedin size={16} />
-              </a>
+            <div className="flex gap-6 pt-4">
+              {[Instagram, Linkedin, Youtube, Facebook].map((Icon, i) => (
+                <a key={i} href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/40 hover:text-brand-emerald hover:border-brand-emerald hover:bg-white/[0.02] transition-all">
+                  <Icon size={18} strokeWidth={1.5} />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Link Columns */}
-          {Object.entries(links).map(([title, items]) => (
-            <div key={title}>
-              <h4 className="text-white font-bold uppercase tracking-widest text-xs mb-6">{title}</h4>
-              <ul className="space-y-3">
-                {items.map((item) => (
-                  <li key={item}>
-                    <Link href="#" className="text-white/40 hover:text-white text-sm font-sans transition-colors">
-                      {item}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Navigation (4 Cols) */}
+          <div className="lg:col-span-4 grid grid-cols-2 gap-12">
+            {footerLinks.map((section) => (
+              <div key={section.title} className="space-y-8">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">{section.title}</h4>
+                <ul className="space-y-5">
+                  {section.links.map((link) => (
+                    <li key={link.label}>
+                      <Link 
+                        href={link.href}
+                        className="text-lg font-medium text-white/60 hover:text-brand-emerald transition-all inline-flex items-center group"
+                      >
+                        {link.label}
+                        <ArrowUpRight size={14} className="ml-2 opacity-0 -translate-y-1 translate-x-1 group-hover:opacity-100 group-hover:translate-y-0 group-hover:translate-x-0 transition-all text-brand-emerald" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
 
+          {/* Contact & CTA (4 Cols) */}
+          <div className="lg:col-span-4 space-y-10">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Private Consultation</h4>
+            
+            <div className="space-y-6">
+              <div className="flex items-start gap-5 group">
+                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-brand-emerald group-hover:bg-brand-emerald group-hover:text-white transition-all duration-500">
+                   <Mail size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/20 mb-1">Send Inquiry</p>
+                  <a href="mailto:info@proptee.ng" className="text-xl font-bold hover:text-brand-emerald transition-colors">info@proptee.ng</a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-5 group">
+                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-brand-emerald group-hover:bg-brand-emerald group-hover:text-white transition-all duration-500">
+                   <MapPin size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/20 mb-1">Visit Headquarters</p>
+                  <p className="text-lg font-bold text-white/80">Victoria Island, Lagos, NG</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+               <Link 
+                 href="/contact" 
+                 className="inline-flex items-center justify-center gap-4 px-10 py-5 bg-brand-emerald text-white font-black uppercase tracking-widest text-[12px] rounded-full hover:bg-white hover:text-brand-dark transition-all duration-500 shadow-2xl shadow-brand-emerald/20"
+               >
+                 Book Consultation
+                 <ArrowRight size={16} />
+               </Link>
+            </div>
+          </div>
         </div>
+
+        {/* ── Middle Section: Newsletter Reveal ── */}
+        <div className="relative py-20 border-t border-white/5 mb-20 overflow-hidden rounded-[3rem] bg-gradient-to-tr from-white/[0.02] to-transparent border border-white/5">
+           <div className="max-w-4xl mx-auto px-8 text-center flex flex-col items-center">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-brand-emerald mb-6">Stay Informed</span>
+              <h2 className="text-3xl md:text-5xl font-serif text-white mb-10 tracking-tight">Access the Private Dossier</h2>
+              
+              <div className="w-full max-w-xl group">
+                 <div className="flex flex-col md:flex-row gap-4 p-2 bg-white/[0.03] border border-white/10 rounded-full focus-within:border-brand-emerald transition-all duration-500">
+                    <input 
+                      type="email" 
+                      placeholder="Enter your premium email"
+                      className="bg-transparent border-none focus:outline-none focus:ring-0 px-8 py-3 text-lg font-medium text-white placeholder:text-white/20 flex-1"
+                    />
+                    <button className="bg-white text-brand-dark px-10 py-4 rounded-full font-black uppercase tracking-widest text-[11px] hover:bg-brand-emerald hover:text-white transition-all">
+                       Subscribe
+                    </button>
+                 </div>
+                 <p className="text-white/20 text-[10px] uppercase tracking-widest mt-6">Only relevant insights. No noise. Ever.</p>
+              </div>
+           </div>
+           
+           {/* Abstract Decoration */}
+           <div className="absolute -top-24 -right-24 w-64 h-64 bg-brand-emerald/5 blur-[100px] rounded-full pointer-events-none" />
+           <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-brand-emerald/5 blur-[100px] rounded-full pointer-events-none" />
+        </div>
+
+        {/* ── Bottom Section: Credits ── */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10 pt-12 border-t border-white/5">
+          <div className="flex flex-col md:flex-row items-center gap-10">
+             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">© 2026 PROPTEE WEST AFRICA</p>
+             <div className="flex gap-10">
+                <Link href="#" className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-brand-emerald transition-colors">Privacy Charter</Link>
+                <Link href="#" className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-brand-emerald transition-colors">Digital Protocol</Link>
+             </div>
+          </div>
+
+          <div className="flex items-center gap-6">
+             <div className="flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.02] border border-white/10">
+                <ShieldCheck size={14} className="text-brand-emerald" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Verified Infrastructure</span>
+             </div>
+             <div className="flex items-center gap-3">
+                <Globe size={14} className="text-white/20" />
+                <span className="text-[9px] font-black tracking-widest uppercase text-white/20">Market 24 / 7</span>
+             </div>
+          </div>
+        </div>
+
       </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10">
-        <div className="px-5 md:px-8 lg:max-w-[1140px] lg:mx-auto py-5 md:py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-white/30 font-sans">
-          <p className="text-center md:text-left">© {new Date().getFullYear()} Proptee Ng Limited. All Rights Reserved.</p>
-          <div className="flex gap-8">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-          </div>
-        </div>
+      
+      {/* Background Narrative */}
+      <div className="absolute left-1/2 -bottom-24 -translate-x-1/2 select-none pointer-events-none opacity-[0.05] overflow-hidden w-full text-center">
+         <h2 className="text-[20vw] font-black leading-none uppercase tracking-tighter whitespace-nowrap">PROPTEE ELITE</h2>
       </div>
     </footer>
   );
