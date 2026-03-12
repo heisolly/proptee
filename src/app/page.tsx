@@ -10,8 +10,7 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import BlogSection from "@/components/home/BlogSection";
 import CTABanner from "@/components/home/CTABanner";
 import { supabase } from "@/lib/supabase";
-
-export const revalidate = 60;
+import PageTransition from "@/components/PageTransition";
 
 export default async function Home() {
   const { data: featuredProperties } = await supabase
@@ -21,29 +20,15 @@ export default async function Home() {
     .limit(9);
 
   return (
-    <>
+    <PageTransition>
       <Header />
-      <main>
-
-        {/* 1. Billboard Hero with Search */}
+      <main className="relative">
         <HeroCinematic />
-
-        {/* 2. About: 3 Feature Icons */}
         <AboutFeatures />
-
-        {/* 3. Popular Properties Grid */}
         <FeaturedCarousel properties={featuredProperties || []} />
-
-        {/* 4. We Help Find Homes */}
         <HelpSection />
-
-        {/* 5. Testimonials Carousel */}
         <TestimonialsSection />
-
-        {/* 6. Blog Posts */}
         <BlogSection />
-
-        {/* 7. CTA Full-Width Banner */}
         <CTABanner />
 
         {/* Floating WhatsApp — above bottom nav on mobile */}
@@ -60,9 +45,9 @@ export default async function Home() {
             Chat with us
           </span>
         </Link>
-
       </main>
       <Footer />
-    </>
+    </PageTransition>
   );
 }
+
