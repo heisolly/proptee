@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -18,8 +20,21 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 40);
+      
+      // Hide header when scrolling down past 100px, show when scrolling up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsHidden(true);
+      } else if (currentScrollY < lastScrollY) {
+         setIsHidden(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Initial session check
     const checkSession = async () => {
@@ -37,7 +52,7 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [lastScrollY]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -60,9 +75,11 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-700 w-full ${
+        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 w-full ${
+          isHidden ? "-translate-y-full" : "translate-y-0"
+        } ${
           scrolled 
-            ? "bg-white/80 backdrop-blur-xl py-4 border-b border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]" 
+            ? "bg-white/90 backdrop-blur-xl py-4 border-b border-gray-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)]" 
             : "bg-transparent py-8"
         }`}
       >
